@@ -1,5 +1,5 @@
 CREATE PROCEDURE [dbo].[spInsertZeroRecordFromQuicken] 
-	@AccountDescription nvarchar(50),
+	@AccountName nvarchar(50),
 	@ReferenceDate date,
 	@Notes nvarchar(max) = NULL
 AS
@@ -12,7 +12,7 @@ BEGIN
 
     SELECT @AccountID = a.AccountID
 	FROM Account a
-	WHERE a.Description = @AccountDescription
+	WHERE a.AccountName = @AccountName
 
 	INSERT INTO ZeroRecord(AccountID, ReferenceDate, Notes, InQuicken)
 	VALUES(@AccountID, @ReferenceDate, @Notes, 1)

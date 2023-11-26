@@ -1,0 +1,10 @@
+CREATE TABLE [dbo].[QIFType] (
+    [QIFTypeID] INT           IDENTITY (1, 1) NOT NULL,
+    [QIFType]   NVARCHAR (10) NOT NULL
+);
+GO
+
+ALTER TABLE [dbo].[QIFType]
+    ADD CONSTRAINT [PK_QIFType] PRIMARY KEY CLUSTERED ([QIFTypeID] ASC);
+GO
+

@@ -4,7 +4,7 @@
 -- Description:	
 -- =============================================
 CREATE PROCEDURE [dbo].[spInsertTransactionFromQuicken] 
-	@AccountDescription nvarchar(50),
+	@AccountName nvarchar(50),
 	@TransactionDate date,
 	@FriendlyDescription nvarchar(1024),
 	@Amount money,
@@ -26,7 +26,7 @@ BEGIN
 
     SELECT @AccountID = a.AccountID
 	FROM Account a
-	WHERE a.Description = @AccountDescription
+	WHERE a.AccountName = @AccountName
 
 	IF ISNUMERIC(@QuickenCheckNumber) = 1 AND CAST(@QuickenCheckNumber AS int) BETWEEN 200 AND 6000
 	BEGIN
