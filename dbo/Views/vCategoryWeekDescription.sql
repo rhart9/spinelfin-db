@@ -2,7 +2,7 @@
 
 
 
-CREATE VIEW [dbo].[vCategoryWeekDescription]
+CREATE VIEW [dbo].[vCategoryWeekDescription]  
 AS
 	SELECT c.CategoryID,
 		CAST(cm.YearValue AS nvarchar) + '-' + RIGHT('0' + CAST(cm.MonthValue AS nvarchar), 2) + ' Week ' + CAST(cw.WeekNumber AS nvarchar) AS DateDescription

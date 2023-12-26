@@ -5,15 +5,11 @@
 
 
 
-CREATE VIEW [dbo].[vCategory]
+CREATE VIEW [dbo].[vCategory]   
 AS
-	SELECT c.CategoryID, 
-		c.CategoryTypeID, 
-		c.MonthID,
-		c.WeekID, 
-		c.FormerDescription, 
+	SELECT c.*, 
 		CASE 
-			WHEN c.FormerDescription IS NOT NULL THEN c.FormerDescription
+			WHEN c.QuickenCategoryName IS NOT NULL THEN c.QuickenCategoryName
 			WHEN cwd.CategoryID IS NOT NULL THEN cwd.DateDescription + ' ' + ct.CategoryTypeDescription
 			WHEN cmd.CategoryID IS NOT NULL THEN cmd.DateDescription + ' ' + ct.CategoryTypeDescription
 			ELSE 'Category ' + CAST(c.CategoryID AS nvarchar)

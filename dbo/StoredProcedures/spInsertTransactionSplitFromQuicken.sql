@@ -22,9 +22,12 @@ BEGIN
 	FROM vCategory c
 	WHERE c.Description = @CategoryName
 
-	IF @CategoryID IS NULL AND ISNULL(@CategoryName, '') <> '' AND NOT EXISTS (SELECT 1 FROM QuickenExcludeCategories WHERE CategoryName = @CategoryName)
+	IF @CategoryID IS NULL 
+		AND ISNULL(@CategoryName, '') <> '' 
+		AND NOT EXISTS (SELECT 1 FROM QuickenExcludeCategories WHERE CategoryName = @CategoryName)
+		AND NOT EXISTS (SELECT 1 FROM Account WHERE '[' + AccountName + ']' = @CategoryName)
 	BEGIN
-		INSERT INTO Category(CategoryTypeID, FormerDescription)
+		INSERT INTO Category(CategoryTypeID, QuickenCategoryName)
 		SELECT ct.CategoryTypeID, @CategoryName
 		FROM CategoryType ct
 		WHERE ct.CategoryCode = 'U'

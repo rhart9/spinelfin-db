@@ -1,6 +1,6 @@
 
 
-CREATE VIEW [dbo].[vCategoryMonthDescription]
+CREATE VIEW [dbo].[vCategoryMonthDescription]  
 AS
 	SELECT c.CategoryID,
 		CAST(cm.YearValue AS nvarchar) + '-' + RIGHT('0' + CAST(cm.MonthValue AS nvarchar), 2) AS DateDescription
