@@ -7,11 +7,14 @@ CREATE TABLE [dbo].[AccountTransaction] (
     [FriendlyDescription]     NVARCHAR (1024) NULL,
     [Amount]                  MONEY           NOT NULL,
     [Balance]                 MONEY           NULL,
-    [Reconciled]              BIT             NOT NULL,
+    [Reconciled]              BIT             CONSTRAINT [DF_AccountTransaction_Reconciled] DEFAULT ((0)) NOT NULL,
+    [Cleared]                 BIT             CONSTRAINT [DF_AccountTransaction_Cleared] DEFAULT ((0)) NOT NULL,
     [CheckNumber]             NVARCHAR (10)   NULL,
-    [InQuicken]               BIT             NOT NULL,
+    [InQuicken]               BIT             CONSTRAINT [DF_AccountTransaction_InQuicken] DEFAULT ((0)) NOT NULL,
     [QuickenMemo]             NVARCHAR (1024) NULL,
-    [QuickenCheckNumber]      NVARCHAR (10)   NULL
+    [QuickenCheckNumber]      NVARCHAR (10)   NULL,
+    CONSTRAINT [PK_AccountTransaction] PRIMARY KEY CLUSTERED ([TransactionID] ASC),
+    CONSTRAINT [FK_AccountTransaction_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID])
 );
 GO
 
@@ -146,5 +149,10 @@ BEGIN
 		END
 	END
 END
+GO
+
+
+ALTER TABLE [dbo].[AccountTransaction]
+    ADD CONSTRAINT [DF_AccountTransaction_Cleared] DEFAULT ((0)) FOR [Cleared];
 GO
 

@@ -9,6 +9,7 @@ CREATE PROCEDURE [dbo].[spInsertTransactionFromQuicken]
 	@FriendlyDescription nvarchar(1024),
 	@Amount money,
 	@Reconciled bit,
+	@Cleared bit,
 	@QuickenCheckNumber nvarchar(10),
 	@QuickenMemo nvarchar(1024)
 AS
@@ -52,8 +53,8 @@ BEGIN
 		SELECT @Balance = ISNULL(@PrevBalance, 0) + @Amount
 	END
 
-	INSERT INTO AccountTransaction(AccountID, TransactionSerialNumber, TransactionDate, FriendlyDescription, Amount, Balance, Reconciled, CheckNumber, InQuicken, QuickenMemo, QuickenCheckNumber)
-	VALUES(@AccountID, @SerialNumber, @TransactionDate, @FriendlyDescription, @Amount, @Balance, @Reconciled, @CheckNumber, 1, @QuickenMemo, @QuickenCheckNumber)
+	INSERT INTO AccountTransaction(AccountID, TransactionSerialNumber, TransactionDate, FriendlyDescription, Amount, Balance, Reconciled, Cleared, CheckNumber, InQuicken, QuickenMemo, QuickenCheckNumber)
+	VALUES(@AccountID, @SerialNumber, @TransactionDate, @FriendlyDescription, @Amount, @Balance, @Reconciled, @Cleared, @CheckNumber, 1, @QuickenMemo, @QuickenCheckNumber)
 
 	SELECT @@IDENTITY AS TransactionID
 END

@@ -12,7 +12,3 @@ CREATE TABLE [dbo].[Category] (
 GO
 
 
-ALTER TABLE [dbo].[Category]
-    ADD CONSTRAINT [DF_Category_IsClosedInQuicken] DEFAULT ((0)) FOR [IsClosedInQuicken];
-GO
-
