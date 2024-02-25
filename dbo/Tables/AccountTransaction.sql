@@ -18,22 +18,6 @@ CREATE TABLE [dbo].[AccountTransaction] (
 );
 GO
 
-ALTER TABLE [dbo].[AccountTransaction]
-    ADD CONSTRAINT [DF_AccountTransaction_InQuicken] DEFAULT ((0)) FOR [InQuicken];
-GO
-
-ALTER TABLE [dbo].[AccountTransaction]
-    ADD CONSTRAINT [DF_AccountTransaction_Reconciled] DEFAULT ((0)) FOR [Reconciled];
-GO
-
-ALTER TABLE [dbo].[AccountTransaction]
-    ADD CONSTRAINT [FK_AccountTransaction_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID]);
-GO
-
-ALTER TABLE [dbo].[AccountTransaction]
-    ADD CONSTRAINT [PK_AccountTransaction] PRIMARY KEY CLUSTERED ([TransactionID] ASC);
-GO
-
 -- =============================================
 -- Author:		
 -- Create date: 
@@ -151,8 +135,4 @@ BEGIN
 END
 GO
 
-
-ALTER TABLE [dbo].[AccountTransaction]
-    ADD CONSTRAINT [DF_AccountTransaction_Cleared] DEFAULT ((0)) FOR [Cleared];
-GO
 

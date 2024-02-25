@@ -50,7 +50,7 @@ BEGIN
 		src.ImportedZeroRecordID, inserted.ZeroRecordID INTO @ZeroRecordMap;
 
 	INSERT INTO Category(CategoryTypeID, QuickenCategoryName)
-	SELECT ct.CategoryTypeID, qsts.CategoryName
+	SELECT DISTINCT ct.CategoryTypeID, qsts.CategoryName
 	FROM CategoryType ct,
 		QuickenStagingTransactionSplit qsts
 	WHERE ct.CategoryCode = 'U'
