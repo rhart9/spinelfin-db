@@ -3,7 +3,7 @@
 -- Create date: 
 -- Description:	
 -- =============================================
-CREATE PROCEDURE [dbo].[spInsertTransactionSplitFromQuicken]
+CREATE PROCEDURE [dbo].[spInsertTransactionSplitFromLegacy]
 	@TransactionID int,
 	@ZeroRecordID int,
 	@CategoryName nvarchar(1024),
@@ -24,10 +24,10 @@ BEGIN
 
 	IF @CategoryID IS NULL 
 		AND ISNULL(@CategoryName, '') <> '' 
-		AND NOT EXISTS (SELECT 1 FROM QuickenExcludeCategories WHERE CategoryName = @CategoryName)
+		AND NOT EXISTS (SELECT 1 FROM LegacyExcludeCategories WHERE CategoryName = @CategoryName)
 		AND NOT EXISTS (SELECT 1 FROM Account WHERE '[' + AccountName + ']' = @CategoryName)
 	BEGIN
-		INSERT INTO Category(CategoryTypeID, QuickenCategoryName)
+		INSERT INTO Category(CategoryTypeID, LegacyCategoryName)
 		SELECT ct.CategoryTypeID, @CategoryName
 		FROM CategoryType ct
 		WHERE ct.CategoryCode = 'U'
@@ -45,7 +45,7 @@ BEGIN
 		SELECT @ZeroRecordID = NULL
 	END
 
-	INSERT INTO AccountTransactionSplit(TransactionID, ZeroRecordID, CategoryID, Amount, Description, ReferenceDate, QuickenCategory)
+	INSERT INTO AccountTransactionSplit(TransactionID, ZeroRecordID, CategoryID, Amount, Description, ReferenceDate, LegacyCategory)
 	VALUES(@TransactionID, @ZeroRecordID, @CategoryID, @Amount, @Description, @ReferenceDate, @CategoryName)
 
 	SELECT @@IDENTITY AS TransactionSplitID

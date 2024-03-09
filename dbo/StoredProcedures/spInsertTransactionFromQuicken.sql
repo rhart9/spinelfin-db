@@ -3,15 +3,15 @@
 -- Create date: 
 -- Description:	
 -- =============================================
-CREATE PROCEDURE [dbo].[spInsertTransactionFromQuicken] 
+CREATE PROCEDURE [dbo].[spInsertTransactionFromLegacy] 
 	@AccountName nvarchar(50),
 	@TransactionDate date,
 	@FriendlyDescription nvarchar(1024),
 	@Amount money,
 	@Reconciled bit,
 	@Cleared bit,
-	@QuickenCheckNumber nvarchar(10),
-	@QuickenMemo nvarchar(1024)
+	@LegacyCheckNumber nvarchar(10),
+	@LegacyMemo nvarchar(1024)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -29,9 +29,9 @@ BEGIN
 	FROM Account a
 	WHERE a.AccountName = @AccountName
 
-	IF ISNUMERIC(@QuickenCheckNumber) = 1 AND CAST(@QuickenCheckNumber AS int) BETWEEN 200 AND 6000
+	IF ISNUMERIC(@LegacyCheckNumber) = 1 AND CAST(@LegacyCheckNumber AS int) BETWEEN 200 AND 6000
 	BEGIN
-		SELECT @CheckNumber = @QuickenCheckNumber
+		SELECT @CheckNumber = @LegacyCheckNumber
 	END
 	ELSE
 	BEGIN
@@ -53,8 +53,8 @@ BEGIN
 		SELECT @Balance = ISNULL(@PrevBalance, 0) + @Amount
 	END
 
-	INSERT INTO AccountTransaction(AccountID, TransactionSerialNumber, TransactionDate, FriendlyDescription, Amount, Balance, Reconciled, Cleared, CheckNumber, InQuicken, QuickenMemo, QuickenCheckNumber)
-	VALUES(@AccountID, @SerialNumber, @TransactionDate, @FriendlyDescription, @Amount, @Balance, @Reconciled, @Cleared, @CheckNumber, 1, @QuickenMemo, @QuickenCheckNumber)
+	INSERT INTO AccountTransaction(AccountID, TransactionSerialNumber, TransactionDate, FriendlyDescription, Amount, Balance, Reconciled, Cleared, CheckNumber, InLegacy, LegacyMemo, LegacyCheckNumber)
+	VALUES(@AccountID, @SerialNumber, @TransactionDate, @FriendlyDescription, @Amount, @Balance, @Reconciled, @Cleared, @CheckNumber, 1, @LegacyMemo, @LegacyCheckNumber)
 
 	SELECT @@IDENTITY AS TransactionID
 END

@@ -3,12 +3,12 @@ CREATE TABLE [dbo].[ZeroRecord] (
     [AccountID]     INT            NOT NULL,
     [ReferenceDate] DATE           NOT NULL,
     [Notes]         NVARCHAR (MAX) NULL,
-    [InQuicken]     BIT            NOT NULL
+    [InLegacy]     BIT            NOT NULL
 );
 GO
 
 ALTER TABLE [dbo].[ZeroRecord]
-    ADD CONSTRAINT [DF_ZeroRecord_InQuicken] DEFAULT ((0)) FOR [InQuicken];
+    ADD CONSTRAINT [DF_ZeroRecord_InLegacy] DEFAULT ((0)) FOR [InLegacy];
 GO
 
 ALTER TABLE [dbo].[ZeroRecord]

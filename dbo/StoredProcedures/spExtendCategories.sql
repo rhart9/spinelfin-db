@@ -8,9 +8,9 @@ CREATE PROCEDURE [dbo].[spExtendCategories]
 	@EndDate date = NULL
 AS
 BEGIN
-	DECLARE @CurrentDate date, @QuickenSwitchoverDate date, @CurrentMonth int, @CurrentYear int, @MonthID int, @WeekID int
+	DECLARE @CurrentDate date, @LegacySwitchoverDate date, @CurrentMonth int, @CurrentYear int, @MonthID int, @WeekID int
 
-	SELECT @QuickenSwitchoverDate = MAX([Date]) FROM QuickenSwitchoverDate
+	SELECT @LegacySwitchoverDate = MAX([Date]) FROM LegacySwitchoverDate
 
 	SELECT @CurrentDate = DATEADD(d, 1, MAX(EndDate)) FROM CategoryMonth
 
@@ -32,7 +32,7 @@ BEGIN
 			@MonthID
 		FROM CategoryType ct
 		WHERE ct.CategoryCode IN ('I', 'ME')
-		OR (@CurrentDate < @QuickenSwitchoverDate AND ct.CategoryCode = 'D')
+		OR (@CurrentDate < @LegacySwitchoverDate AND ct.CategoryCode = 'D')
 
 		WHILE @CurrentMonth = MONTH(@CurrentDate)
 		BEGIN
@@ -41,7 +41,7 @@ BEGIN
 
 			SELECT @WeekID = @@IDENTITY
 
-			IF @CurrentDate >= @QuickenSwitchoverDate
+			IF @CurrentDate >= @LegacySwitchoverDate
 			BEGIN
 				INSERT INTO Category(CategoryTypeID, MonthID, WeekID)
 				SELECT CategoryTypeID, @MonthID, @WeekID

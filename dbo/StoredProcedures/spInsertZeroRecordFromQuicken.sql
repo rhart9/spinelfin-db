@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[spInsertZeroRecordFromQuicken] 
+CREATE PROCEDURE [dbo].[spInsertZeroRecordFromLegacy] 
 	@AccountName nvarchar(50),
 	@ReferenceDate date,
 	@Notes nvarchar(max) = NULL
@@ -14,7 +14,7 @@ BEGIN
 	FROM Account a
 	WHERE a.AccountName = @AccountName
 
-	INSERT INTO ZeroRecord(AccountID, ReferenceDate, Notes, InQuicken)
+	INSERT INTO ZeroRecord(AccountID, ReferenceDate, Notes, InLegacy)
 	VALUES(@AccountID, @ReferenceDate, @Notes, 1)
 
 	SELECT @@IDENTITY AS ZeroRecordID

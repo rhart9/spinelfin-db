@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[QuickenStagingTransactionSplit] (
+CREATE TABLE [dbo].[LegacyStagingTransactionSplit] (
     [ImportedTransactionID] INT             NULL,
     [ImportedZeroRecordID]  INT             NULL,
     [CategoryName]          NVARCHAR (255)  NULL,

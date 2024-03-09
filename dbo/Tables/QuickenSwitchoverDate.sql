@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[QuickenSwitchoverDate] (
+CREATE TABLE [dbo].[LegacySwitchoverDate] (
     [Date] DATE NOT NULL
 );
 GO

@@ -7,7 +7,7 @@ CREATE TABLE [dbo].[AccountTransactionSplit] (
     [ReferenceDate]        DATE            NULL,
     [Description]          NVARCHAR (1024) NULL,
     [PaymentTransactionID] INT             NULL,
-    [QuickenCategory]      NVARCHAR (1024) NULL
+    [LegacyCategory]      NVARCHAR (1024) NULL
 );
 GO
 

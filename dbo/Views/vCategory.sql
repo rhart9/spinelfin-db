@@ -9,7 +9,7 @@ CREATE VIEW [dbo].[vCategory]
 AS
 	SELECT c.*, 
 		CASE 
-			WHEN c.QuickenCategoryName IS NOT NULL THEN c.QuickenCategoryName
+			WHEN c.LegacyCategoryName IS NOT NULL THEN c.LegacyCategoryName
 			WHEN cwd.CategoryID IS NOT NULL THEN cwd.DateDescription + ' ' + ct.CategoryTypeDescription
 			WHEN cmd.CategoryID IS NOT NULL THEN cmd.DateDescription + ' ' + ct.CategoryTypeDescription
 			ELSE 'Category ' + CAST(c.CategoryID AS nvarchar)

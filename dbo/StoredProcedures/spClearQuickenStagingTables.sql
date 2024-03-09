@@ -1,9 +1,9 @@
-CREATE PROCEDURE dbo.spClearQuickenStagingTables
+CREATE PROCEDURE dbo.spClearLegacyStagingTables
 AS
 BEGIN
-	;DELETE FROM QuickenStagingTransactionSplit
-	;DELETE FROM QuickenStagingTransaction
-	;DELETE FROM QuickenStagingZeroRecord
+	;DELETE FROM LegacyStagingTransactionSplit
+	;DELETE FROM LegacyStagingTransaction
+	;DELETE FROM LegacyStagingZeroRecord
 END
 GO
 
