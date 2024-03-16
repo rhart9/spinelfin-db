@@ -10,9 +10,9 @@ CREATE TABLE [dbo].[AccountTransaction] (
     [Reconciled]              BIT             CONSTRAINT [DF_AccountTransaction_Reconciled] DEFAULT ((0)) NOT NULL,
     [Cleared]                 BIT             CONSTRAINT [DF_AccountTransaction_Cleared] DEFAULT ((0)) NOT NULL,
     [CheckNumber]             NVARCHAR (10)   NULL,
-    [InLegacy]               BIT             CONSTRAINT [DF_AccountTransaction_InLegacy] DEFAULT ((0)) NOT NULL,
-    [LegacyMemo]             NVARCHAR (1024) NULL,
-    [LegacyCheckNumber]      NVARCHAR (10)   NULL,
+    [LegacyMemo]              NVARCHAR (1024) NULL,
+    [LegacyCheckNumber]       NVARCHAR (10)   NULL,
+    [LegacySpinelfinRef]      INT             NULL,
     CONSTRAINT [PK_AccountTransaction] PRIMARY KEY CLUSTERED ([TransactionID] ASC),
     CONSTRAINT [FK_AccountTransaction_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID])
 );

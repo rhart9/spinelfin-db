@@ -53,8 +53,8 @@ BEGIN
 		SELECT @Balance = ISNULL(@PrevBalance, 0) + @Amount
 	END
 
-	INSERT INTO AccountTransaction(AccountID, TransactionSerialNumber, TransactionDate, FriendlyDescription, Amount, Balance, Reconciled, Cleared, CheckNumber, InLegacy, LegacyMemo, LegacyCheckNumber)
-	VALUES(@AccountID, @SerialNumber, @TransactionDate, @FriendlyDescription, @Amount, @Balance, @Reconciled, @Cleared, @CheckNumber, 1, @LegacyMemo, @LegacyCheckNumber)
+	INSERT INTO AccountTransaction(AccountID, TransactionSerialNumber, TransactionDate, FriendlyDescription, Amount, Balance, Reconciled, Cleared, CheckNumber, LegacyMemo, LegacyCheckNumber)
+	VALUES(@AccountID, @SerialNumber, @TransactionDate, @FriendlyDescription, @Amount, @Balance, @Reconciled, @Cleared, @CheckNumber, @LegacyMemo, @LegacyCheckNumber)
 
 	SELECT @@IDENTITY AS TransactionID
 END
