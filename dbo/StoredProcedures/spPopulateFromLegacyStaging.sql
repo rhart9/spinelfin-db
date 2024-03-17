@@ -38,14 +38,15 @@ BEGIN
 		SELECT 
 			qszr.ImportedZeroRecordID,
 			a.AccountID,
-			qszr.ReferenceDate
+			qszr.ReferenceDate,
+			qszr.Reconciled
 		FROM LegacyStagingZeroRecord qszr
 		INNER JOIN Account a ON qszr.AccountName = a.AccountName
 	) src
 	ON 1 = 0
 	WHEN NOT MATCHED THEN
-		INSERT (AccountID, ReferenceDate)
-		VALUES (src.AccountID, src.ReferenceDate)
+		INSERT (AccountID, ReferenceDate, Reconciled)
+		VALUES (src.AccountID, src.ReferenceDate, src.Reconciled)
 	OUTPUT
 		src.ImportedZeroRecordID, inserted.ZeroRecordID INTO @ZeroRecordMap;
 
