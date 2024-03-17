@@ -66,33 +66,7 @@ BEGIN
 	LEFT OUTER JOIN @AccountTransactionMap tm ON qsts.ImportedTransactionID = tm.ImportedTransactionID
 	LEFT OUTER JOIN @ZeroRecordMap zm ON qsts.ImportedZeroRecordID = zm.ImportedZeroRecordID
 
-	;WITH cte_LegacyRecords AS (
-		SELECT 'AccountTransaction' AS SourceTable, at.TransactionID AS ID, at.AccountID, at.TransactionDate AS ReferenceDate, NULL AS LegacyRef FROM AccountTransaction at
-		UNION
-		SELECT 'ZeroRecord' AS SourceTable, zr.ZeroRecordID AS ID, zr.AccountID, zr.ReferenceDate, NULL AS LegacyRef FROM ZeroRecord zr
-	)
-	SELECT *
-	INTO #LegacyRecords
-	FROM cte_LegacyRecords
-
-	;WITH cte_NumberedLegacyRecords AS (
-		SELECT lr.SourceTable, lr.ID, ROW_NUMBER() OVER (PARTITION BY lr.AccountID ORDER BY lr.ReferenceDate, CASE WHEN lr.SourceTable = 'ZeroRecord' THEN 1 ELSE 2 END, lr.ID) AS LegacyRef
-		FROM #LegacyRecords lr
-	)
-	UPDATE lr
-	SET lr.LegacyRef = cnlr.LegacyRef
-	FROM #LegacyRecords lr
-	INNER JOIN cte_NumberedLegacyRecords cnlr ON lr.SourceTable = cnlr.SourceTable AND lr.ID = cnlr.ID
-
-	UPDATE at
-	SET at.LegacySpinelfinRef = lr.LegacyRef
-	FROM AccountTransaction at
-	INNER JOIN #LegacyRecords lr ON at.TransactionID = lr.ID AND lr.SourceTable = 'AccountTransaction'
-
-	UPDATE zr
-	SET zr.LegacySpinelfinRef = lr.LegacyRef
-	FROM ZeroRecord zr
-	INNER JOIN #LegacyRecords lr ON zr.ZeroRecordID = lr.ID AND lr.SourceTable = 'ZeroRecord'
+	EXEC spAssignLegacyRefs
 
 	;ENABLE TRIGGER AccountTransactionInsertUpdateTrigger ON AccountTransaction
 END
