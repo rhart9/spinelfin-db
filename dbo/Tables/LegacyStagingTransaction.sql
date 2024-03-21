@@ -6,8 +6,9 @@ CREATE TABLE [dbo].[LegacyStagingTransaction] (
     [Amount]                DECIMAL (10, 2) NULL,
     [Reconciled]            BIT             NULL,
     [Cleared]               BIT             NULL,
-    [LegacyCheckNumber]    NVARCHAR (255)  NULL,
-    [LegacyMemo]           NVARCHAR (255)  NULL
+    [LegacyCheckNumber]     NVARCHAR (255)  NULL,
+    [LegacyMemo]            NVARCHAR (255)  NULL,
+    [LegacySpinelfinRef]    INT             NULL
 );
 GO
 

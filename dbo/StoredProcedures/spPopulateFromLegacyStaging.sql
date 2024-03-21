@@ -22,14 +22,15 @@ BEGIN
 			qst.Cleared, 
 			CASE WHEN ISNUMERIC(qst.LegacyCheckNumber) = 1 AND CAST(qst.LegacyCheckNumber AS int) BETWEEN 200 AND 6000 THEN qst.LegacyCheckNumber END AS CheckNumber, 
 			qst.LegacyMemo, 
-			qst.LegacyCheckNumber
+			qst.LegacyCheckNumber,
+			qst.LegacySpinelfinRef
 		FROM LegacyStagingTransaction qst
 		INNER JOIN Account a ON qst.AccountName = a.AccountName
 	) src
 	ON 1 = 0
 	WHEN NOT MATCHED THEN
-		INSERT (AccountID, TransactionSerialNumber, TransactionDate, FriendlyDescription, Amount, Balance, Reconciled, Cleared, CheckNumber, LegacyMemo, LegacyCheckNumber)
-		VALUES (src.AccountID, src.TransactionSerialNumber, src.TransactionDate, src.FriendlyDescription, src.Amount, src.Balance, src.Reconciled, src.Cleared, src.CheckNumber, src.LegacyMemo, src.LegacyCheckNumber)
+		INSERT (AccountID, TransactionSerialNumber, TransactionDate, FriendlyDescription, Amount, Balance, Reconciled, Cleared, CheckNumber, LegacyMemo, LegacyCheckNumber, LegacySpinelfinRef)
+		VALUES (src.AccountID, src.TransactionSerialNumber, src.TransactionDate, src.FriendlyDescription, src.Amount, src.Balance, src.Reconciled, src.Cleared, src.CheckNumber, src.LegacyMemo, src.LegacyCheckNumber, src.LegacySpinelfinRef)
 	OUTPUT
 		src.ImportedTransactionID, inserted.TransactionID INTO @AccountTransactionMap;
 
@@ -39,14 +40,15 @@ BEGIN
 			qszr.ImportedZeroRecordID,
 			a.AccountID,
 			qszr.ReferenceDate,
-			qszr.Reconciled
+			qszr.Reconciled,
+			qszr.LegacySpinelfinRef
 		FROM LegacyStagingZeroRecord qszr
 		INNER JOIN Account a ON qszr.AccountName = a.AccountName
 	) src
 	ON 1 = 0
 	WHEN NOT MATCHED THEN
-		INSERT (AccountID, ReferenceDate, Reconciled)
-		VALUES (src.AccountID, src.ReferenceDate, src.Reconciled)
+		INSERT (AccountID, ReferenceDate, Reconciled, LegacySpinelfinRef)
+		VALUES (src.AccountID, src.ReferenceDate, src.Reconciled, src.LegacySpinelfinRef)
 	OUTPUT
 		src.ImportedZeroRecordID, inserted.ZeroRecordID INTO @ZeroRecordMap;
 
