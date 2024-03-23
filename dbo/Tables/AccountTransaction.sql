@@ -15,6 +15,7 @@ CREATE TABLE [dbo].[AccountTransaction] (
     [LegacySpinelfinRef]      INT             NULL,
     [CreatedDT]               DATETIME        CONSTRAINT [DF_AccountTransaction_CreatedDT] DEFAULT (getdate()) NOT NULL,
     [UpdatedDT]               DATETIME        CONSTRAINT [DF_AccountTransaction_UpdatedDT] DEFAULT (getdate()) NOT NULL,
+    [ProcessedInLegacy]       BIT             CONSTRAINT [DF_AccountTransaction_ProcessedInLegacy] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_AccountTransaction] PRIMARY KEY CLUSTERED ([TransactionID] ASC),
     CONSTRAINT [FK_AccountTransaction_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID])
 );
@@ -139,12 +140,8 @@ GO
 
 
 
-ALTER TABLE [dbo].[AccountTransaction]
-    ADD CONSTRAINT [DF_AccountTransaction_CreatedDT] DEFAULT (getdate()) FOR [CreatedDT];
-GO
-
 
 ALTER TABLE [dbo].[AccountTransaction]
-    ADD CONSTRAINT [DF_AccountTransaction_UpdatedDT] DEFAULT (getdate()) FOR [UpdatedDT];
+    ADD CONSTRAINT [DF_AccountTransaction_ProcessedInLegacy] DEFAULT ((0)) FOR [ProcessedInLegacy];
 GO
 

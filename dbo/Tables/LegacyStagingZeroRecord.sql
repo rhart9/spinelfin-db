@@ -3,7 +3,7 @@ CREATE TABLE [dbo].[LegacyStagingZeroRecord] (
     [AccountName]          NVARCHAR (255) NULL,
     [ReferenceDate]        DATE           NULL,
     [Reconciled]           BIT            NULL,
-    [LegacySpinelfinRef]   INT            NULL
+    [LegacyRef]            NVARCHAR (255) NULL
 );
 GO
 

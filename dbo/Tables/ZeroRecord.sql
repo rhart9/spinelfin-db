@@ -7,18 +7,15 @@ CREATE TABLE [dbo].[ZeroRecord] (
     [Reconciled]         BIT            NULL,
     [CreatedDT]          DATETIME       CONSTRAINT [DF_ZeroRecord_CreatedDT] DEFAULT (getdate()) NOT NULL,
     [UpdatedDT]          DATETIME       CONSTRAINT [DF_ZeroRecord_UpdatedDT] DEFAULT (getdate()) NOT NULL,
+    [ProcessedInLegacy]  BIT            CONSTRAINT [DF_ZeroRecord_ProcessedInLegacy] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_ZeroRecord] PRIMARY KEY CLUSTERED ([ZeroRecordID] ASC),
     CONSTRAINT [FK_ZeroRecord_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID])
 );
 GO
 
 
-ALTER TABLE [dbo].[ZeroRecord]
-    ADD CONSTRAINT [DF_ZeroRecord_CreatedDT] DEFAULT (getdate()) FOR [CreatedDT];
-GO
-
 
 ALTER TABLE [dbo].[ZeroRecord]
-    ADD CONSTRAINT [DF_ZeroRecord_UpdatedDT] DEFAULT (getdate()) FOR [UpdatedDT];
+    ADD CONSTRAINT [DF_ZeroRecord_ProcessedInLegacy] DEFAULT ((0)) FOR [ProcessedInLegacy];
 GO
 
