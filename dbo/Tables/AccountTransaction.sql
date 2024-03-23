@@ -1,23 +1,25 @@
 CREATE TABLE [dbo].[AccountTransaction] (
-    [TransactionID]           INT             IDENTITY (1, 1) NOT NULL,
-    [AccountID]               INT             NOT NULL,
-    [TransactionSerialNumber] INT             NULL,
-    [TransactionDate]         DATE            NOT NULL,
-    [BankDescription]         NVARCHAR (1024) NULL,
-    [FriendlyDescription]     NVARCHAR (1024) NULL,
-    [Amount]                  MONEY           NOT NULL,
-    [Balance]                 MONEY           NULL,
-    [Reconciled]              BIT             CONSTRAINT [DF_AccountTransaction_Reconciled] DEFAULT ((0)) NOT NULL,
-    [Cleared]                 BIT             CONSTRAINT [DF_AccountTransaction_Cleared] DEFAULT ((0)) NOT NULL,
-    [CheckNumber]             NVARCHAR (10)   NULL,
-    [LegacyMemo]              NVARCHAR (1024) NULL,
-    [LegacyCheckNumber]       NVARCHAR (10)   NULL,
-    [LegacySpinelfinRef]      INT             NULL,
-    [CreatedDT]               DATETIME        CONSTRAINT [DF_AccountTransaction_CreatedDT] DEFAULT (getdate()) NOT NULL,
-    [UpdatedDT]               DATETIME        CONSTRAINT [DF_AccountTransaction_UpdatedDT] DEFAULT (getdate()) NOT NULL,
-    [ProcessedInLegacy]       BIT             CONSTRAINT [DF_AccountTransaction_ProcessedInLegacy] DEFAULT ((0)) NOT NULL,
+    [TransactionID]            INT             IDENTITY (1, 1) NOT NULL,
+    [AccountID]                INT             NOT NULL,
+    [TransactionSerialNumber]  INT             NULL,
+    [TransactionDate]          DATE            NOT NULL,
+    [BankDescription]          NVARCHAR (1024) NULL,
+    [FriendlyDescription]      NVARCHAR (1024) NULL,
+    [Amount]                   MONEY           NOT NULL,
+    [Balance]                  MONEY           NULL,
+    [Reconciled]               BIT             CONSTRAINT [DF_AccountTransaction_Reconciled] DEFAULT ((0)) NOT NULL,
+    [Cleared]                  BIT             CONSTRAINT [DF_AccountTransaction_Cleared] DEFAULT ((0)) NOT NULL,
+    [CheckNumber]              NVARCHAR (10)   NULL,
+    [LegacyMemo]               NVARCHAR (1024) NULL,
+    [LegacyCheckNumber]        NVARCHAR (10)   NULL,
+    [LegacySpinelfinRef]       INT             NULL,
+    [CreatedDT]                DATETIME        CONSTRAINT [DF_AccountTransaction_CreatedDT] DEFAULT (getdate()) NOT NULL,
+    [UpdatedDT]                DATETIME        CONSTRAINT [DF_AccountTransaction_UpdatedDT] DEFAULT (getdate()) NOT NULL,
+    [ProcessedInLegacy]        BIT             CONSTRAINT [DF_AccountTransaction_ProcessedInLegacy] DEFAULT ((0)) NOT NULL,
+    [BankStagingTransactionID] INT             NULL,
     CONSTRAINT [PK_AccountTransaction] PRIMARY KEY CLUSTERED ([TransactionID] ASC),
-    CONSTRAINT [FK_AccountTransaction_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID])
+    CONSTRAINT [FK_AccountTransaction_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID]),
+    CONSTRAINT [FK_AccountTransaction_BankStagingTransaction] FOREIGN KEY ([BankStagingTransactionID]) REFERENCES [dbo].[BankStagingTransaction] ([BankStagingTransactionID])
 );
 GO
 
@@ -141,7 +143,8 @@ GO
 
 
 
+
 ALTER TABLE [dbo].[AccountTransaction]
-    ADD CONSTRAINT [DF_AccountTransaction_ProcessedInLegacy] DEFAULT ((0)) FOR [ProcessedInLegacy];
+    ADD CONSTRAINT [FK_AccountTransaction_BankStagingTransaction] FOREIGN KEY ([BankStagingTransactionID]) REFERENCES [dbo].[BankStagingTransaction] ([BankStagingTransactionID]);
 GO
 

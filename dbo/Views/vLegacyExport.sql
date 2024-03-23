@@ -31,10 +31,5 @@ AS
 	INNER JOIN QIFType qt ON a.QIFTypeID = qt.QIFTypeID
 	INNER JOIN AccountTransactionSplit ats ON lr.TransactionSplitID = ats.TransactionSplitID
 	LEFT OUTER JOIN vCategory c ON ats.CategoryID = c.CategoryID
-
-
-	/*
-	select * From vLegacyEXport
-	*/
 GO
 

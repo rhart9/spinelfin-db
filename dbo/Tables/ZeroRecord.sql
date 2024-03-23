@@ -15,7 +15,3 @@ GO
 
 
 
-ALTER TABLE [dbo].[ZeroRecord]
-    ADD CONSTRAINT [DF_ZeroRecord_ProcessedInLegacy] DEFAULT ((0)) FOR [ProcessedInLegacy];
-GO
-

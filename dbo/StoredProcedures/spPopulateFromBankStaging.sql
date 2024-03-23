@@ -10,6 +10,7 @@ BEGIN
 	MERGE INTO AccountTransaction
 	USING (
 		SELECT 
+			t.BankStagingTransactionID,
 			t.AccountID, 
 			t.TransactionDate, 
 			t.Payee, 
@@ -19,8 +20,8 @@ BEGIN
 	) src
 	ON 1 = 0
 	WHEN NOT MATCHED THEN
-		INSERT (AccountID, TransactionDate, BankDescription, FriendlyDescription, Amount, ProcessedInLegacy)
-		VALUES (src.AccountID, src.TransactionDate, src.Payee, CASE WHEN @AutoPopulateFriendlyDescription = 1 THEN src.Payee ELSE NULL END, src.Amount, 0)
+		INSERT (AccountID, TransactionDate, BankDescription, FriendlyDescription, Amount, ProcessedInLegacy, BankStagingTransactionID)
+		VALUES (src.AccountID, src.TransactionDate, src.Payee, CASE WHEN @AutoPopulateFriendlyDescription = 1 THEN src.Payee ELSE NULL END, src.Amount, 0, src.BankStagingTransactionID)
 	OUTPUT
 		inserted.TransactionID INTO @AccountTransactionMap;
 
