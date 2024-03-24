@@ -28,7 +28,7 @@ BEGIN
 	INSERT INTO AccountTransactionSplit(TransactionID, Amount, ReferenceDate)
 	SELECT at.TransactionID, at.Amount, at.TransactionDate
 	FROM AccountTransaction at
-	LEFT OUTER JOIN @AccountTransactionMap tm ON at.TransactionID = tm.TransactionID
+	INNER JOIN @AccountTransactionMap tm ON at.TransactionID = tm.TransactionID
 
 	EXEC spAssignLegacyRefs
 
