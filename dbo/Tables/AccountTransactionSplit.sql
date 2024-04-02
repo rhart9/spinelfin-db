@@ -1,34 +1,18 @@
 CREATE TABLE [dbo].[AccountTransactionSplit] (
-    [TransactionSplitID]   INT             IDENTITY (1, 1) NOT NULL,
-    [TransactionID]        INT             NULL,
-    [ZeroRecordID]         INT             NULL,
-    [CategoryID]           INT             NULL,
-    [Amount]               MONEY           NOT NULL,
-    [ReferenceDate]        DATE            NULL,
-    [Description]          NVARCHAR (1024) NULL,
-    [PaymentTransactionID] INT             NULL,
-    [LegacyCategory]      NVARCHAR (1024) NULL
+    [TransactionSplitID] INT             IDENTITY (1, 1) NOT NULL,
+    [TransactionID]      INT             NULL,
+    [ZeroRecordID]       INT             NULL,
+    [CategoryID]         INT             NULL,
+    [Amount]             MONEY           NOT NULL,
+    [ReferenceDate]      DATE            NULL,
+    [Description]        NVARCHAR (1024) NULL,
+    [LegacyCategory]     NVARCHAR (1024) NULL,
+    CONSTRAINT [PK_AccountTransactionSplitID] PRIMARY KEY CLUSTERED ([TransactionSplitID] ASC),
+    CONSTRAINT [CK_AccountTransactionSplit] CHECK (NOT ([TransactionID] IS NULL AND [ZeroRecordID] IS NULL)),
+    CONSTRAINT [FK_AccountTransactionSplit_ZeroRecord] FOREIGN KEY ([ZeroRecordID]) REFERENCES [dbo].[ZeroRecord] ([ZeroRecordID]),
+    CONSTRAINT [FK_AccountTransactionSplitID_AccountTransaction] FOREIGN KEY ([TransactionID]) REFERENCES [dbo].[AccountTransaction] ([TransactionID]),
+    CONSTRAINT [FK_AccountTransactionSplitID_Category] FOREIGN KEY ([CategoryID]) REFERENCES [dbo].[Category] ([CategoryID])
 );
-GO
-
-ALTER TABLE [dbo].[AccountTransactionSplit]
-    ADD CONSTRAINT [FK_AccountTransactionSplitID_AccountTransaction1] FOREIGN KEY ([PaymentTransactionID]) REFERENCES [dbo].[AccountTransaction] ([TransactionID]);
-GO
-
-ALTER TABLE [dbo].[AccountTransactionSplit]
-    ADD CONSTRAINT [FK_AccountTransactionSplitID_Category] FOREIGN KEY ([CategoryID]) REFERENCES [dbo].[Category] ([CategoryID]);
-GO
-
-ALTER TABLE [dbo].[AccountTransactionSplit]
-    ADD CONSTRAINT [FK_AccountTransactionSplitID_AccountTransaction] FOREIGN KEY ([TransactionID]) REFERENCES [dbo].[AccountTransaction] ([TransactionID]);
-GO
-
-ALTER TABLE [dbo].[AccountTransactionSplit]
-    ADD CONSTRAINT [FK_AccountTransactionSplit_ZeroRecord] FOREIGN KEY ([ZeroRecordID]) REFERENCES [dbo].[ZeroRecord] ([ZeroRecordID]);
-GO
-
-ALTER TABLE [dbo].[AccountTransactionSplit]
-    ADD CONSTRAINT [CK_AccountTransactionSplit] CHECK (NOT ([TransactionID] IS NULL AND [ZeroRecordID] IS NULL));
 GO
 
 -- =============================================
@@ -58,9 +42,5 @@ BEGIN
 	END
 
 END
-GO
-
-ALTER TABLE [dbo].[AccountTransactionSplit]
-    ADD CONSTRAINT [PK_AccountTransactionSplitID] PRIMARY KEY CLUSTERED ([TransactionSplitID] ASC);
 GO
 

@@ -17,8 +17,10 @@ CREATE TABLE [dbo].[AccountTransaction] (
     [UpdatedDT]                DATETIME        CONSTRAINT [DF_AccountTransaction_UpdatedDT] DEFAULT (getdate()) NOT NULL,
     [ProcessedInLegacy]        BIT             CONSTRAINT [DF_AccountTransaction_ProcessedInLegacy] DEFAULT ((0)) NOT NULL,
     [BankStagingTransactionID] INT             NULL,
+    [PaymentTransactionID]     INT             NULL,
     CONSTRAINT [PK_AccountTransaction] PRIMARY KEY CLUSTERED ([TransactionID] ASC),
     CONSTRAINT [FK_AccountTransaction_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID]),
+    CONSTRAINT [FK_AccountTransaction_AccountTransaction] FOREIGN KEY ([PaymentTransactionID]) REFERENCES [dbo].[AccountTransaction] ([TransactionID]),
     CONSTRAINT [FK_AccountTransaction_BankStagingTransaction] FOREIGN KEY ([BankStagingTransactionID]) REFERENCES [dbo].[BankStagingTransaction] ([BankStagingTransactionID])
 );
 GO
@@ -144,7 +146,4 @@ GO
 
 
 
-ALTER TABLE [dbo].[AccountTransaction]
-    ADD CONSTRAINT [FK_AccountTransaction_BankStagingTransaction] FOREIGN KEY ([BankStagingTransactionID]) REFERENCES [dbo].[BankStagingTransaction] ([BankStagingTransactionID]);
-GO
 
