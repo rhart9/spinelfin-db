@@ -91,6 +91,19 @@ BEGIN
 	OUTPUT
 		src.ImportedZeroRecordID, inserted.ZeroRecordID INTO @ZeroRecordMap;
 
+	DECLARE @EndYear int, @EndMonth int
+
+	SELECT @EndYear = MAX(CAST(SUBSTRING(qsts.CategoryName, 1, 4) as int))
+	FROM LegacyStagingTransactionSplit qsts
+	WHERE qsts.IsMonthlyCategory = 1
+
+	SELECT @EndMonth = MAX(CAST(SUBSTRING(qsts.CategoryName, 6, 2) as int))
+	FROM LegacyStagingTransactionSplit qsts
+	WHERE qsts.IsMonthlyCategory = 1
+	AND CAST(SUBSTRING(qsts.CategoryName, 1, 4) as int) = @EndYear
+
+	EXEC spExtendCategories @EndYear, @EndMonth, 1
+
 	INSERT INTO Category(CategoryTypeID, LegacyCategoryName)
 	SELECT DISTINCT ct.CategoryTypeID, qsts.CategoryName
 	FROM CategoryType ct,

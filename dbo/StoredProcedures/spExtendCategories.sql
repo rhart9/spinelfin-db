@@ -4,24 +4,24 @@
 -- Description:	
 -- =============================================
 CREATE PROCEDURE [dbo].[spExtendCategories] 
-	-- Add the parameters for the stored procedure here
-	@EndDate date = NULL
+	@EndYear int = NULL,
+	@EndMonth int = NULL,
+	@UseLegacyConventions bit = 0
 AS
 BEGIN
-	DECLARE @CurrentDate date, @LegacySwitchoverDate date, @CurrentMonth int, @CurrentYear int, @MonthID int, @WeekID int
-
-	SELECT @LegacySwitchoverDate = MAX([Date]) FROM LegacySwitchoverDate
+	DECLARE @CurrentDate date, @CurrentMonth int, @CurrentYear int, @MonthID int, @WeekID int
 
 	SELECT @CurrentDate = DATEADD(d, 1, MAX(EndDate)) FROM CategoryMonth
 
 	SELECT @CurrentDate = ISNULL(@CurrentDate, '4/5/2013')
-	SELECT @EndDate = ISNULL(@EndDate, GETDATE())
+	SELECT @EndYear = ISNULL(@EndYear, YEAR(GETDATE()))
+	SELECT @EndMonth = ISNULL(@EndMonth, MONTH(GETDATE()))
 
-	WHILE @CurrentDate < @EndDate
+	SELECT @CurrentYear = YEAR(@CurrentDate)
+	SELECT @CurrentMonth = MONTH(@CurrentDate)
+
+	WHILE (@CurrentYear < @EndYear OR (@CurrentYear = @EndYear AND @CurrentMonth <= @EndMonth))
 	BEGIN
-		SELECT @CurrentYear = YEAR(@CurrentDate)
-		SELECT @CurrentMonth = MONTH(@CurrentDate)
-
 		INSERT INTO CategoryMonth(YearValue, MonthValue, StartDate)
 		VALUES(@CurrentYear, @CurrentMonth, @CurrentDate)
 
@@ -32,7 +32,7 @@ BEGIN
 			@MonthID
 		FROM CategoryType ct
 		WHERE ct.CategoryCode IN ('I', 'ME')
-		OR (@CurrentDate < @LegacySwitchoverDate AND ct.CategoryCode = 'D')
+		OR (@UseLegacyConventions = 1 AND ct.CategoryCode = 'D')
 
 		WHILE @CurrentMonth = MONTH(@CurrentDate)
 		BEGIN
@@ -41,7 +41,7 @@ BEGIN
 
 			SELECT @WeekID = @@IDENTITY
 
-			IF @CurrentDate >= @LegacySwitchoverDate
+			IF @UseLegacyConventions = 0
 			BEGIN
 				INSERT INTO Category(CategoryTypeID, MonthID, WeekID)
 				SELECT CategoryTypeID, @MonthID, @WeekID
@@ -55,6 +55,9 @@ BEGIN
 		UPDATE CategoryMonth
 		SET EndDate = DATEADD(d, -1, @CurrentDate)
 		WHERE CategoryMonthID = @MonthID
+
+		SELECT @CurrentYear = YEAR(@CurrentDate)
+		SELECT @CurrentMonth = MONTH(@CurrentDate)
 	END
 
 END

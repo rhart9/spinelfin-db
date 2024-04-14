@@ -59,8 +59,8 @@ GO
 -- Description:	
 -- =============================================
 CREATE TRIGGER [dbo].[AccountTransactionInsertUpdateTrigger]
-   ON [dbo].[AccountTransaction] 
-   AFTER INSERT,UPDATE
+ ON [dbo].[AccountTransaction] 
+ AFTER INSERT,UPDATE
 AS 
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -84,12 +84,12 @@ BEGIN
 
 	IF @DelReconciled = 1
 	BEGIN
-		IF UPDATE(Reconciled)
+		/*IF UPDATE(Reconciled)
 		BEGIN
 			RAISERROR('Cannot unreconcile a reconciled transaction', 16, 1)
 			ROLLBACK
 			RETURN
-		END
+		END*/
 		IF UPDATE(TransactionSerialNumber) OR UPDATE(Amount) OR UPDATE(Balance) OR UPDATE(AccountID)
 		BEGIN
 			RAISERROR('Cannot update account, serial number, amount or balance of a reconciled transaction', 16, 1)
