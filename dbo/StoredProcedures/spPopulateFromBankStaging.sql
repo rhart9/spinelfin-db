@@ -25,10 +25,12 @@ BEGIN
 	OUTPUT
 		inserted.TransactionID INTO @AccountTransactionMap;
 
-	INSERT INTO AccountTransactionSplit(TransactionID, Amount, ReferenceDate)
-	SELECT at.TransactionID, at.Amount, at.TransactionDate
+	INSERT INTO AccountTransactionSplit(TransactionID, CategoryID, Amount, Description, ReferenceDate, LegacyCategory)
+	SELECT at.TransactionID, c.CategoryID, at.Amount, bt.SplitDescription, at.TransactionDate, bt.CategoryName
 	FROM AccountTransaction at
 	INNER JOIN @AccountTransactionMap tm ON at.TransactionID = tm.TransactionID
+	INNER JOIN BankStagingTransaction bt ON at.BankStagingTransactionID = bt.BankStagingTransactionID
+	LEFT OUTER JOIN vCategory c ON bt.CategoryName = c.Description
 
 	EXEC spAssignLegacyRefs
 
