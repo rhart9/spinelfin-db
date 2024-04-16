@@ -18,10 +18,13 @@ CREATE TABLE [dbo].[AccountTransaction] (
     [ProcessedInLegacy]        BIT             CONSTRAINT [DF_AccountTransaction_ProcessedInLegacy] DEFAULT ((0)) NOT NULL,
     [BankStagingTransactionID] INT             NULL,
     [PaymentTransactionID]     INT             NULL,
+    [CreditReasonCategoryID]   INT             NULL,
+    [CreditReason]             NVARCHAR (256)  NULL,
     CONSTRAINT [PK_AccountTransaction] PRIMARY KEY CLUSTERED ([TransactionID] ASC),
     CONSTRAINT [FK_AccountTransaction_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID]),
     CONSTRAINT [FK_AccountTransaction_AccountTransaction] FOREIGN KEY ([PaymentTransactionID]) REFERENCES [dbo].[AccountTransaction] ([TransactionID]),
-    CONSTRAINT [FK_AccountTransaction_BankStagingTransaction] FOREIGN KEY ([BankStagingTransactionID]) REFERENCES [dbo].[BankStagingTransaction] ([BankStagingTransactionID])
+    CONSTRAINT [FK_AccountTransaction_BankStagingTransaction] FOREIGN KEY ([BankStagingTransactionID]) REFERENCES [dbo].[BankStagingTransaction] ([BankStagingTransactionID]),
+    CONSTRAINT [FK_AccountTransaction_CreditReasonCategory] FOREIGN KEY ([CreditReasonCategoryID]) REFERENCES [dbo].[CreditReasonCategory] ([CreditReasonCategoryID])
 );
 GO
 
@@ -146,4 +149,9 @@ GO
 
 
 
+
+
+ALTER TABLE [dbo].[AccountTransaction]
+    ADD CONSTRAINT [FK_AccountTransaction_CreditReasonCategory] FOREIGN KEY ([CreditReasonCategoryID]) REFERENCES [dbo].[CreditReasonCategory] ([CreditReasonCategoryID]);
+GO
 

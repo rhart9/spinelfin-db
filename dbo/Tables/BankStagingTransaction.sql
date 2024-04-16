@@ -13,11 +13,3 @@ CREATE TABLE [dbo].[BankStagingTransaction] (
 );
 GO
 
-ALTER TABLE [dbo].[BankStagingTransaction]
-    ADD CONSTRAINT [DF_BankTransaction_CreatedDT] DEFAULT (getdate()) FOR [CreatedDT];
-GO
-
-ALTER TABLE [dbo].[BankStagingTransaction]
-    ADD CONSTRAINT [PK_BankTransaction] PRIMARY KEY CLUSTERED ([BankStagingTransactionID] ASC);
-GO
-
