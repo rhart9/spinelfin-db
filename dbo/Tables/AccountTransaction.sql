@@ -151,7 +151,3 @@ GO
 
 
 
-ALTER TABLE [dbo].[AccountTransaction]
-    ADD CONSTRAINT [FK_AccountTransaction_CreditReasonCategory] FOREIGN KEY ([CreditReasonCategoryID]) REFERENCES [dbo].[CreditReasonCategory] ([CreditReasonCategoryID]);
-GO
-

@@ -7,6 +7,7 @@ CREATE TABLE [dbo].[AccountTransactionSplit] (
     [ReferenceDate]      DATE            NULL,
     [Description]        NVARCHAR (1024) NULL,
     [LegacyCategory]     NVARCHAR (1024) NULL,
+    [Subcategory]        NVARCHAR (255)  NULL,
     CONSTRAINT [PK_AccountTransactionSplitID] PRIMARY KEY CLUSTERED ([TransactionSplitID] ASC),
     CONSTRAINT [CK_AccountTransactionSplit] CHECK (NOT ([TransactionID] IS NULL AND [ZeroRecordID] IS NULL)),
     CONSTRAINT [FK_AccountTransactionSplit_ZeroRecord] FOREIGN KEY ([ZeroRecordID]) REFERENCES [dbo].[ZeroRecord] ([ZeroRecordID]),

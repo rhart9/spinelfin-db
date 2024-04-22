@@ -25,8 +25,8 @@ BEGIN
 	OUTPUT
 		inserted.TransactionID INTO @AccountTransactionMap;
 
-	INSERT INTO AccountTransactionSplit(TransactionID, CategoryID, Amount, Description, ReferenceDate, LegacyCategory)
-	SELECT at.TransactionID, c.CategoryID, at.Amount, bt.SplitDescription, at.TransactionDate, bt.CategoryName
+	INSERT INTO AccountTransactionSplit(TransactionID, CategoryID, Amount, Description, ReferenceDate, LegacyCategory, Subcategory)
+	SELECT at.TransactionID, c.CategoryID, at.Amount, bt.SplitDescription, at.TransactionDate, bt.CategoryName, bt.SubcategoryName
 	FROM AccountTransaction at
 	INNER JOIN @AccountTransactionMap tm ON at.TransactionID = tm.TransactionID
 	INNER JOIN BankStagingTransaction bt ON at.BankStagingTransactionID = bt.BankStagingTransactionID
