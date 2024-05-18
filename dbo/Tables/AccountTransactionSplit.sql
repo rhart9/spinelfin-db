@@ -8,8 +8,11 @@ CREATE TABLE [dbo].[AccountTransactionSplit] (
     [Description]        NVARCHAR (1024) NULL,
     [LegacyCategory]     NVARCHAR (1024) NULL,
     [Subcategory]        NVARCHAR (255)  NULL,
+    [Notes]              NVARCHAR (MAX)  NULL,
+    [MonthlyBudgetID]    INT             NULL,
     CONSTRAINT [PK_AccountTransactionSplitID] PRIMARY KEY CLUSTERED ([TransactionSplitID] ASC),
     CONSTRAINT [CK_AccountTransactionSplit] CHECK (NOT ([TransactionID] IS NULL AND [ZeroRecordID] IS NULL)),
+    CONSTRAINT [FK_AccountTransactionSplit_MonthlyBudget] FOREIGN KEY ([MonthlyBudgetID]) REFERENCES [budget].[MonthlyBudget] ([MonthlyBudgetID]),
     CONSTRAINT [FK_AccountTransactionSplit_ZeroRecord] FOREIGN KEY ([ZeroRecordID]) REFERENCES [dbo].[ZeroRecord] ([ZeroRecordID]),
     CONSTRAINT [FK_AccountTransactionSplitID_AccountTransaction] FOREIGN KEY ([TransactionID]) REFERENCES [dbo].[AccountTransaction] ([TransactionID]),
     CONSTRAINT [FK_AccountTransactionSplitID_Category] FOREIGN KEY ([CategoryID]) REFERENCES [dbo].[Category] ([CategoryID])
@@ -43,5 +46,10 @@ BEGIN
 	END
 
 END
+GO
+
+
+ALTER TABLE [dbo].[AccountTransactionSplit]
+    ADD CONSTRAINT [FK_AccountTransactionSplit_MonthlyBudget] FOREIGN KEY ([MonthlyBudgetID]) REFERENCES [budget].[MonthlyBudget] ([MonthlyBudgetID]);
 GO
 
