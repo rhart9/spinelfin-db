@@ -20,12 +20,3 @@ GO
 
 
 
-ALTER TABLE [dbo].[ZeroRecord]
-    ADD CONSTRAINT [FK_ZeroRecord_ZeroRecord] FOREIGN KEY ([PreviousLegacyZeroRecordID]) REFERENCES [dbo].[ZeroRecord] ([ZeroRecordID]);
-GO
-
-
-ALTER TABLE [dbo].[ZeroRecord]
-    ADD CONSTRAINT [FK_ZeroRecord_ZeroRecordCategory] FOREIGN KEY ([ZeroRecordCategoryID]) REFERENCES [dbo].[ZeroRecordCategory] ([ZeroRecordCategoryID]);
-GO
-

@@ -20,6 +20,7 @@ CREATE TABLE [dbo].[AccountTransaction] (
     [PaymentTransactionID]     INT             NULL,
     [CreditReasonCategoryID]   INT             NULL,
     [CreditReason]             NVARCHAR (256)  NULL,
+    [BalanceTransferFlag]      BIT             CONSTRAINT [DF_AccountTransaction_BalanceTransferFlag] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_AccountTransaction] PRIMARY KEY CLUSTERED ([TransactionID] ASC),
     CONSTRAINT [FK_AccountTransaction_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID]),
     CONSTRAINT [FK_AccountTransaction_AccountTransaction] FOREIGN KEY ([PaymentTransactionID]) REFERENCES [dbo].[AccountTransaction] ([TransactionID]),
@@ -150,4 +151,9 @@ GO
 
 
 
+
+
+ALTER TABLE [dbo].[AccountTransaction]
+    ADD CONSTRAINT [DF_AccountTransaction_BalanceTransferFlag] DEFAULT ((0)) FOR [BalanceTransferFlag];
+GO
 
