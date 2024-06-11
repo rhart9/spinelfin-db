@@ -153,7 +153,3 @@ GO
 
 
 
-ALTER TABLE [dbo].[AccountTransaction]
-    ADD CONSTRAINT [DF_AccountTransaction_BalanceTransferFlag] DEFAULT ((0)) FOR [BalanceTransferFlag];
-GO
-

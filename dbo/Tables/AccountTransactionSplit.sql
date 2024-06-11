@@ -53,12 +53,3 @@ GO
 
 
 
-ALTER TABLE [dbo].[AccountTransactionSplit]
-    ADD CONSTRAINT [FK_AccountTransactionSplit_AccountTransaction] FOREIGN KEY ([OriginalTransactionID]) REFERENCES [dbo].[AccountTransaction] ([TransactionID]);
-GO
-
-
-ALTER TABLE [dbo].[AccountTransactionSplit]
-    ADD CONSTRAINT [FK_AccountTransactionSplit_ZeroRecord1] FOREIGN KEY ([OriginalZeroRecordID]) REFERENCES [dbo].[ZeroRecord] ([ZeroRecordID]);
-GO
-
