@@ -23,7 +23,3 @@ GO
 
 
 
-ALTER TABLE [dbo].[ZeroRecord]
-    ADD CONSTRAINT [FK_ZeroRecord_CategoryMonth] FOREIGN KEY ([CategoryMonthID]) REFERENCES [dbo].[CategoryMonth] ([CategoryMonthID]);
-GO
-

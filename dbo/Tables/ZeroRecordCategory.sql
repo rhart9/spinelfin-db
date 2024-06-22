@@ -2,8 +2,6 @@ CREATE TABLE [dbo].[ZeroRecordCategory] (
     [ZeroRecordCategoryID]       INT            IDENTITY (1, 1) NOT NULL,
     [CategoryName]               NVARCHAR (16)  NULL,
     [CategoryDescription]        NVARCHAR (255) NULL,
-    [FromDate]                   DATE           NULL,
-    [ThruDate]                   DATE           NULL,
     [ExpectedNumSplitRows]       INT            NULL,
     [ExpectedCategoryTypeID1]    INT            NULL,
     [ExpectedCategoryTypeID2]    INT            NULL,
@@ -16,8 +14,4 @@ CREATE TABLE [dbo].[ZeroRecordCategory] (
 );
 GO
 
-
-ALTER TABLE [dbo].[ZeroRecordCategory]
-    ADD CONSTRAINT [FK_ZeroRecordCategory_Category] FOREIGN KEY ([ExpectedCategoryID2]) REFERENCES [dbo].[Category] ([CategoryID]);
-GO
 
