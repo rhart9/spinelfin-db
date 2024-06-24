@@ -9,11 +9,3 @@ CREATE TABLE [dbo].[ZeroRecordCategoryDateRange] (
 );
 GO
 
-ALTER TABLE [dbo].[ZeroRecordCategoryDateRange]
-    ADD CONSTRAINT [PK_ZeroRecordCategoryDateRange] PRIMARY KEY CLUSTERED ([ZeroRecordCategoryDateRangeID] ASC);
-GO
-
-ALTER TABLE [dbo].[ZeroRecordCategoryDateRange]
-    ADD CONSTRAINT [FK_ZeroRecordCategoryDateRange_ZeroRecordCategory] FOREIGN KEY ([ZeroRecordCategoryID]) REFERENCES [dbo].[ZeroRecordCategory] ([ZeroRecordCategoryID]);
-GO
-
