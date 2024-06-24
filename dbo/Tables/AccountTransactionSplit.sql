@@ -27,8 +27,8 @@ GO
 -- Create date: 
 -- Description:	
 -- =============================================
-CREATE TRIGGER AccountTransactionSplitInsertUpdateTrigger 
-   ON dbo.AccountTransactionSplit 
+CREATE TRIGGER [dbo].[AccountTransactionSplitInsertUpdateTrigger] 
+   ON [dbo].[AccountTransactionSplit] 
    AFTER INSERT,UPDATE
 AS 
 BEGIN
@@ -36,7 +36,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	DECLARE @IsClosed bit
+	/*DECLARE @IsClosed bit
 
 	SELECT @IsClosed = c.IsClosed
 	FROM inserted i
@@ -46,7 +46,7 @@ BEGIN
 	BEGIN
 		RAISERROR('Cannot assign a closed category to a transaction split', 16, 1)
 		ROLLBACK
-	END
+	END*/
 
 END
 GO
