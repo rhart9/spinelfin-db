@@ -2,11 +2,11 @@
 CREATE VIEW [dbo].[vLegacyExport]
 AS
 	WITH cte_LegacyRecords AS (
-		SELECT at.AccountID, at.FriendlyDescription AS Description, at.TransactionDate AS ReferenceDate, at.LegacySpinelfinRef, at.Reconciled, at.Cleared, at.Amount, ats.TransactionSplitID, at.ProcessedInLegacy
+		SELECT at.AccountID, at.FriendlyDescription AS Description, at.TransactionDate AS ReferenceDate, at.LegacySpinelfinRef, at.Reconciled, at.Cleared, at.Amount, ats.TransactionSplitID, at.ProcessedInLegacy, at.ExportToLegacy
 		FROM AccountTransaction at
 		INNER JOIN AccountTransactionSplit ats ON at.TransactionID = ats.TransactionID
 		UNION
-		SELECT zr.AccountID, 'Zero Record' AS Description, zr.ReferenceDate, zr.LegacySpinelfinRef, zr.Reconciled, 0 AS Cleared, 0 AS Amount, ats.TransactionSplitID, zr.ProcessedInLegacy
+		SELECT zr.AccountID, 'Zero Record' AS Description, zr.ReferenceDate, zr.LegacySpinelfinRef, zr.Reconciled, 0 AS Cleared, 0 AS Amount, ats.TransactionSplitID, zr.ProcessedInLegacy, zr.ExportToLegacy
 		FROM ZeroRecord zr
 		INNER JOIN AccountTransactionSplit ats ON zr.ZeroRecordID = ats.ZeroRecordID
 	)
@@ -31,5 +31,6 @@ AS
 	INNER JOIN QIFType qt ON a.QIFTypeID = qt.QIFTypeID
 	INNER JOIN AccountTransactionSplit ats ON lr.TransactionSplitID = ats.TransactionSplitID
 	LEFT OUTER JOIN vCategory c ON ats.CategoryID = c.CategoryID
+	WHERE lr.ExportToLegacy = 1
 GO
 

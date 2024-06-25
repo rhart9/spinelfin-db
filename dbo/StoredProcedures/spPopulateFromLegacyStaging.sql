@@ -19,6 +19,7 @@ BEGIN
 		INNER JOIN AccountTransactionSplit ats ON at.TransactionID = ats.TransactionID
 		LEFT OUTER JOIN LegacyStagingTransaction lst ON at.LegacySpinelfinRef = CAST(lst.LegacyRef AS int) AND a.AccountName = lst.AccountName
 		WHERE lst.ImportedTransactionID IS NULL
+		AND at.LegacySpinelfinRef IS NOT NULL
 		AND at.Reconciled = 0
 
 		DELETE at
@@ -26,6 +27,7 @@ BEGIN
 		INNER JOIN Account a ON at.AccountID = a.AccountID
 		LEFT OUTER JOIN LegacyStagingTransaction lst ON at.LegacySpinelfinRef = CAST(lst.LegacyRef AS int) AND a.AccountName = lst.AccountName
 		WHERE lst.ImportedTransactionID IS NULL
+		AND at.LegacySpinelfinRef IS NOT NULL
 		AND at.Reconciled = 0
 
 		DELETE ats
@@ -34,6 +36,7 @@ BEGIN
 		INNER JOIN AccountTransactionSplit ats ON zr.ZeroRecordID = ats.ZeroRecordID
 		LEFT OUTER JOIN LegacyStagingZeroRecord lszr ON zr.LegacySpinelfinRef = CAST(lszr.LegacyRef AS int) AND a.AccountName = lszr.AccountName
 		WHERE lszr.ImportedZeroRecordID IS NULL
+		AND zr.LegacySpinelfinRef IS NOT NULL
 		AND zr.Reconciled = 0
 
 		DELETE zr
@@ -41,6 +44,7 @@ BEGIN
 		INNER JOIN Account a ON zr.AccountID = a.AccountID
 		LEFT OUTER JOIN LegacyStagingZeroRecord lszr ON zr.LegacySpinelfinRef = CAST(lszr.LegacyRef AS int) AND a.AccountName = lszr.AccountName
 		WHERE lszr.ImportedZeroRecordID IS NULL
+		AND zr.LegacySpinelfinRef IS NOT NULL
 		AND zr.Reconciled = 0
 	END
 	MERGE INTO AccountTransaction at
@@ -130,7 +134,10 @@ BEGIN
 	LEFT OUTER JOIN @ZeroRecordMap zm ON qsts.ImportedZeroRecordID = zm.ImportedZeroRecordID
 	WHERE (tm.ImportedTransactionID IS NOT NULL OR zm.ImportedZeroRecordID IS NOT NULL)
 
-	EXEC spAssignLegacyRefs
+	IF @InitialLoad = 1
+	BEGIN
+		EXEC spAssignLegacyRefs
+	END
 
 	;ENABLE TRIGGER AccountTransactionInsertUpdateTrigger ON AccountTransaction
 END

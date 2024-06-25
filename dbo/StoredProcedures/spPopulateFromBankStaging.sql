@@ -1,6 +1,7 @@
 CREATE PROCEDURE [dbo].[spPopulateFromBankStaging]
 	@BatchGUID uniqueidentifier,
-	@AutoPopulateFriendlyDescription bit
+	@AutoPopulateFriendlyDescription bit,
+	@ExportToLegacy bit = 0
 AS
 BEGIN
 	;DISABLE TRIGGER AccountTransactionInsertUpdateTrigger ON AccountTransaction
@@ -20,8 +21,8 @@ BEGIN
 	) src
 	ON 1 = 0
 	WHEN NOT MATCHED THEN
-		INSERT (AccountID, TransactionDate, BankDescription, FriendlyDescription, Amount, ProcessedInLegacy, BankStagingTransactionID)
-		VALUES (src.AccountID, src.TransactionDate, src.Payee, CASE WHEN @AutoPopulateFriendlyDescription = 1 THEN src.Payee ELSE NULL END, src.Amount, 0, src.BankStagingTransactionID)
+		INSERT (AccountID, TransactionDate, BankDescription, FriendlyDescription, Amount, ProcessedInLegacy, BankStagingTransactionID, ExportToLegacy)
+		VALUES (src.AccountID, src.TransactionDate, src.Payee, CASE WHEN @AutoPopulateFriendlyDescription = 1 THEN src.Payee ELSE NULL END, src.Amount, 0, src.BankStagingTransactionID, @ExportToLegacy)
 	OUTPUT
 		inserted.TransactionID INTO @AccountTransactionMap;
 

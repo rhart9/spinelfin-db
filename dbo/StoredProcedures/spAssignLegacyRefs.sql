@@ -2,13 +2,14 @@ CREATE PROCEDURE [dbo].[spAssignLegacyRefs]
 AS
 BEGIN
 	;WITH cte_LegacyRecords AS (
-		SELECT 'AccountTransaction' AS SourceTable, at.TransactionID AS ID, at.AccountID, at.TransactionDate AS ReferenceDate, at.LegacySpinelfinRef FROM AccountTransaction at
+		SELECT 'AccountTransaction' AS SourceTable, at.TransactionID AS ID, at.AccountID, at.TransactionDate AS ReferenceDate, at.LegacySpinelfinRef, at.ExportToLegacy FROM AccountTransaction at
 		UNION
-		SELECT 'ZeroRecord' AS SourceTable, zr.ZeroRecordID AS ID, zr.AccountID, zr.ReferenceDate, zr.LegacySpinelfinRef FROM ZeroRecord zr
+		SELECT 'ZeroRecord' AS SourceTable, zr.ZeroRecordID AS ID, zr.AccountID, zr.ReferenceDate, zr.LegacySpinelfinRef, zr.ExportToLegacy FROM ZeroRecord zr
 	)
 	SELECT *
 	INTO #LegacyRecords
 	FROM cte_LegacyRecords
+	WHERE (ExportToLegacy = 1 OR LegacySpinelfinRef IS NOT NULL)
 
 	;WITH cte_MaxLegacyRefs AS (
 		SELECT lr.AccountID, MAX(lr.LegacySpinelfinRef) AS MaxRef
