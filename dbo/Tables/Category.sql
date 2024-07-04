@@ -4,9 +4,8 @@ CREATE TABLE [dbo].[Category] (
     [MonthID]             INT            NULL,
     [WeekID]              INT            NULL,
     [CategoryDescription] NVARCHAR (255) NULL,
-    [LegacyCategoryName] NVARCHAR (32)  NULL,
+    [LegacyCategoryName]  NVARCHAR (32)  NULL,
     [IsClosed]            BIT            CONSTRAINT [DF_Category_IsClosed] DEFAULT ((0)) NOT NULL,
-    [IsClosedInLegacy]   BIT            CONSTRAINT [DF_Category_IsClosedInLegacy] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Category] PRIMARY KEY CLUSTERED ([CategoryID] ASC)
 );
 GO
