@@ -1,6 +1,6 @@
 CREATE TABLE [dbo].[ZeroRecord] (
     [ZeroRecordID]               INT            IDENTITY (1, 1) NOT NULL,
-    [AccountID]                  INT            NOT NULL,
+    [AccountID]                  INT            NULL,
     [ReferenceDate]              DATE           NOT NULL,
     [Notes]                      NVARCHAR (MAX) NULL,
     [LegacySpinelfinRef]         INT            NULL,

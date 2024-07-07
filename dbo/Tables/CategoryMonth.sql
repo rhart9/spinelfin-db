@@ -7,7 +7,10 @@ CREATE TABLE [dbo].[CategoryMonth] (
     [FirstOfMonth]        AS   (datefromparts([YearValue],[MonthValue],(1))),
     [YearValueNextMonth]  AS   (case when [MonthValue]=(12) then [YearValue]+(1) else [YearValue] end),
     [MonthValueNextMonth] AS   (case when [MonthValue]=(12) then (1) else [MonthValue]+(1) end),
-    CONSTRAINT [PK_Month] PRIMARY KEY CLUSTERED ([CategoryMonthID] ASC)
+    [ReconCategoryID]     INT  NULL,
+    CONSTRAINT [PK_Month] PRIMARY KEY CLUSTERED ([CategoryMonthID] ASC),
+    CONSTRAINT [FK_CategoryMonth_Category] FOREIGN KEY ([ReconCategoryID]) REFERENCES [dbo].[Category] ([CategoryID])
 );
 GO
+
 
