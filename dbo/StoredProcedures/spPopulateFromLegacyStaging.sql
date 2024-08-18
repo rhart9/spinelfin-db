@@ -2,8 +2,6 @@ CREATE PROCEDURE [dbo].[spPopulateFromLegacyStaging]
 	@InitialLoad bit = 0
 AS
 BEGIN
-	;DISABLE TRIGGER AccountTransactionInsertUpdateTrigger ON AccountTransaction
-
 	DECLARE @AccountTransactionMap AS TABLE(ImportedTransactionID int, TransactionID int)
 	DECLARE @ZeroRecordMap AS TABLE(ImportedZeroRecordID int, ZeroRecordID int)
 
@@ -138,8 +136,6 @@ BEGIN
 	BEGIN
 		EXEC spAssignLegacyRefs
 	END
-
-	;ENABLE TRIGGER AccountTransactionInsertUpdateTrigger ON AccountTransaction
 END
 GO
 
