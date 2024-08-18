@@ -1,30 +1,18 @@
 CREATE TABLE [budget].[MonthlyBudget] (
-    [MonthlyBudgetID]         INT   IDENTITY (1, 1) NOT NULL,
-    [BudgetItemID]            INT   NOT NULL,
-    [Amount]                  MONEY NOT NULL,
-    [AccountID]               INT   NOT NULL,
-    [MonthID]                 INT   NOT NULL,
-    [OriginalCurrentBudgetID] INT   NULL
+    [MonthlyBudgetID]         INT      IDENTITY (1, 1) NOT NULL,
+    [BudgetItemID]            INT      NOT NULL,
+    [BudgetAmount]            MONEY    NOT NULL,
+    [MatchAmount]             MONEY    NULL,
+    [AccountID]               INT      NULL,
+    [MonthID]                 INT      NOT NULL,
+    [OriginalCurrentBudgetID] INT      NULL,
+    [AmountFrequency]         CHAR (1) CONSTRAINT [DF_MonthlyBudget_Frequency] DEFAULT ('M') NOT NULL,
+    [ReconFrequency]          CHAR (1) NULL,
+    [SumWeeklyValues]         BIT      CONSTRAINT [DF_MonthlyBudget_SumWeeklyValues] DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_MonthlyBudget] PRIMARY KEY CLUSTERED ([MonthlyBudgetID] ASC),
+    CONSTRAINT [FK_MonthlyBudget_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID]),
+    CONSTRAINT [FK_MonthlyBudget_BudgetItem] FOREIGN KEY ([BudgetItemID]) REFERENCES [budget].[BudgetItem] ([BudgetItemID]),
+    CONSTRAINT [FK_MonthlyBudget_CategoryMonth] FOREIGN KEY ([MonthID]) REFERENCES [dbo].[CategoryMonth] ([CategoryMonthID])
 );
-GO
-
-ALTER TABLE [budget].[MonthlyBudget]
-    ADD CONSTRAINT [PK_MonthlyBudget] PRIMARY KEY CLUSTERED ([MonthlyBudgetID] ASC);
-GO
-
-ALTER TABLE [budget].[MonthlyBudget]
-    ADD CONSTRAINT [FK_MonthlyBudget_BudgetItem] FOREIGN KEY ([BudgetItemID]) REFERENCES [budget].[BudgetItem] ([BudgetItemID]);
-GO
-
-ALTER TABLE [budget].[MonthlyBudget]
-    ADD CONSTRAINT [FK_MonthlyBudget_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID]);
-GO
-
-ALTER TABLE [budget].[MonthlyBudget]
-    ADD CONSTRAINT [FK_MonthlyBudget_CurrentBudget] FOREIGN KEY ([OriginalCurrentBudgetID]) REFERENCES [budget].[CurrentBudget] ([CurrentBudgetID]);
-GO
-
-ALTER TABLE [budget].[MonthlyBudget]
-    ADD CONSTRAINT [FK_MonthlyBudget_CategoryMonth] FOREIGN KEY ([MonthID]) REFERENCES [dbo].[CategoryMonth] ([CategoryMonthID]);
 GO
 

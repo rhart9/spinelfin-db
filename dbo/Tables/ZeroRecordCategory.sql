@@ -16,12 +16,15 @@ CREATE TABLE [dbo].[ZeroRecordCategory] (
     [SplitDescription2]                 NVARCHAR (1024) NULL,
     [Multiplier]                        INT             CONSTRAINT [DF_ZeroRecordCategory_Multiplier] DEFAULT ((1)) NOT NULL,
     [UseWeekBoundaries]                 BIT             CONSTRAINT [DF_ZeroRecordCategory_UseWeekBoundaries] DEFAULT ((0)) NOT NULL,
+    [BudgetItemID]                      INT             NULL,
     CONSTRAINT [PK_ZeroRecordCategory] PRIMARY KEY CLUSTERED ([ZeroRecordCategoryID] ASC),
+    CONSTRAINT [FK_ZeroRecordCategory_BudgetItem] FOREIGN KEY ([BudgetItemID]) REFERENCES [budget].[BudgetItem] ([BudgetItemID]),
     CONSTRAINT [FK_ZeroRecordCategory_Category] FOREIGN KEY ([ExpectedCategoryID2]) REFERENCES [dbo].[Category] ([CategoryID]),
     CONSTRAINT [FK_ZeroRecordCategory_CategoryType] FOREIGN KEY ([ExpectedCategoryTypeID1]) REFERENCES [dbo].[CategoryType] ([CategoryTypeID]),
     CONSTRAINT [FK_ZeroRecordCategory_CategoryType1] FOREIGN KEY ([ExpectedCategoryTypeID2]) REFERENCES [dbo].[CategoryType] ([CategoryTypeID])
 );
 GO
+
 
 
 
