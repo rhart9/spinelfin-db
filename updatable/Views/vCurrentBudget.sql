@@ -1,7 +1,8 @@
 
 
 
-CREATE VIEW [budget].[vCurrentBudgetForUpdate] AS
+
+CREATE VIEW updatable.vCurrentBudget AS
 	SELECT bi.Name, cb.BudgetAmount, cb.MatchAmount, a.AccountName, cb.AmountFrequency, cb.ReconFrequency
 	FROM budget.CurrentBudget cb
 	INNER JOIN budget.BudgetItem bi ON cb.BudgetItemID = bi.BudgetItemID
@@ -12,8 +13,9 @@ GO
 
 
 
-CREATE TRIGGER [budget].[vCurrentBudgetInsertTrigger]
-	ON [budget].[vCurrentBudgetForUpdate]
+
+CREATE TRIGGER updatable.[vCurrentBudgetInsertTrigger]
+	ON updatable.vCurrentBudget
 	INSTEAD OF INSERT
 AS
 BEGIN
@@ -71,8 +73,9 @@ END
 GO
 
 
-CREATE TRIGGER [budget].[vCurrentBudgetDeleteTrigger]
-	ON [budget].[vCurrentBudgetForUpdate]
+
+CREATE TRIGGER [updatable].[vCurrentBudgetDeleteTrigger]
+	ON updatable.vCurrentBudget
 	INSTEAD OF DELETE
 AS
 BEGIN
