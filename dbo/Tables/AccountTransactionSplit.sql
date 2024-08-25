@@ -3,7 +3,7 @@ CREATE TABLE [dbo].[AccountTransactionSplit] (
     [TransactionID]         INT             NULL,
     [ZeroRecordID]          INT             NULL,
     [CategoryID]            INT             NULL,
-    [Amount]                MONEY           NOT NULL,
+    [Amount]                DECIMAL(9,2)           NOT NULL,
     [ReferenceDate]         DATE            NULL,
     [Description]           NVARCHAR (1024) NULL,
     [LegacyCategory]        NVARCHAR (1024) NULL,

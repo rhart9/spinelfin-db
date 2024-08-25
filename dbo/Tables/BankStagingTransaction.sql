@@ -3,7 +3,7 @@ CREATE TABLE [dbo].[BankStagingTransaction] (
     [AccountID]                INT              NOT NULL,
     [TransactionDate]          DATE             NOT NULL,
     [Payee]                    NVARCHAR (1024)  NOT NULL,
-    [Amount]                   MONEY            NOT NULL,
+    [Amount]                   DECIMAL(9,2)            NOT NULL,
     [BatchGUID]                UNIQUEIDENTIFIER NULL,
     [CreatedDT]                DATETIME         CONSTRAINT [DF_BankTransaction_CreatedDT] DEFAULT (getdate()) NOT NULL,
     [CategoryName]             NVARCHAR (255)   NULL,

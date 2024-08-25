@@ -5,7 +5,7 @@ CREATE TABLE [dbo].[AccountTransaction] (
     [TransactionDate]          DATE            NOT NULL,
     [BankDescription]          NVARCHAR (1024) NULL,
     [FriendlyDescription]      NVARCHAR (1024) NULL,
-    [Amount]                   MONEY           NOT NULL,
+    [Amount]                   DECIMAL(9,2)           NOT NULL,
     [Reconciled]               BIT             CONSTRAINT [DF_AccountTransaction_Reconciled] DEFAULT ((0)) NOT NULL,
     [Cleared]                  BIT             CONSTRAINT [DF_AccountTransaction_Cleared] DEFAULT ((0)) NOT NULL,
     [CheckNumber]              NVARCHAR (10)   NULL,

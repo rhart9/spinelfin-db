@@ -7,7 +7,7 @@ CREATE PROCEDURE [dbo].[spInsertTransactionSplitFromLegacy]
 	@TransactionID int,
 	@ZeroRecordID int,
 	@CategoryName nvarchar(1024),
-	@Amount money,
+	@Amount decimal(9,2),
 	@ReferenceDate date,
 	@Description nvarchar(1024)
 AS

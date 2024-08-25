@@ -1,8 +1,8 @@
 CREATE TABLE [budget].[MonthlyBudget] (
     [MonthlyBudgetID]         INT      IDENTITY (1, 1) NOT NULL,
     [BudgetItemID]            INT      NOT NULL,
-    [BudgetAmount]            MONEY    NOT NULL,
-    [MatchAmount]             MONEY    NULL,
+    [BudgetAmount]            DECIMAL(9,2)    NOT NULL,
+    [MatchAmount]             DECIMAL(9,2)    NULL,
     [AccountID]               INT      NULL,
     [MonthID]                 INT      NOT NULL,
     [OriginalCurrentBudgetID] INT      NULL,
