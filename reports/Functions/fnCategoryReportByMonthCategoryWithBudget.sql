@@ -1,49 +1,33 @@
 
-CREATE FUNCTION [reports].[fnCategoryReportMonthlyExpense]
+CREATE FUNCTION [reports].[fnCategoryReportByMonthCategoryWithBudget]
 (	
 	@CategoryYear int, 
-	@CategoryMonth int
+	@CategoryMonth int,
+	@CategoryType nvarchar(50)
 )
 RETURNS TABLE 
 AS
 RETURN 
 (
-	WITH cte_Records AS (
-		SELECT at.AccountID, at.FriendlyDescription AS Description, at.TransactionDate AS ReferenceDate, ats.TransactionSplitID, at.TransactionID, at.PaymentTransactionID, at.TransactionID AS ReferenceID, at.Amount
-		FROM AccountTransaction at
-		INNER JOIN AccountTransactionSplit ats ON at.TransactionID = ats.TransactionID
-		UNION
-		SELECT zr.AccountID, NULL AS Description, zr.ReferenceDate, ats.TransactionSplitID, NULL AS TransactionID, NULL AS PaymentTransactionID, zr.ZeroRecordID AS ReferenceID, 0 AS Amount
-		FROM ZeroRecord zr
-		INNER JOIN AccountTransactionSplit ats ON zr.ZeroRecordID = ats.ZeroRecordID
-	),
-	cte_TransactionSplits AS (
+	WITH cte_TransactionSplits AS (
 		SELECT 
 			r.ReferenceDate, 
-			a.AccountName, 
-			CASE WHEN r.TransactionID IS NULL THEN s.Description
-				WHEN ISNULL(s.Description, '') <> '' THEN r.Description + ' | ' + s.Description
-				ELSE r.Description
-			END AS Description,
-			CASE WHEN r.Amount <> s.Amount AND r.TransactionID IS NOT NULL THEN 'X' ELSE '' END AS P,
-			CASE WHEN r.TransactionID IS NULL THEN 'X' ELSE '' END AS Z,
-			s.Amount, 
-			CASE WHEN s.Amount >= 0 THEN CAST(s.Amount AS nvarchar) ELSE '' END AS Credit, 
-			CASE WHEN s.Amount < 0 THEN CAST(s.Amount * -1 AS nvarchar) ELSE '' END AS Debit, 
-			SUM(s.Amount) OVER (ORDER BY CASE WHEN s.Amount >= 0 THEN 1 ELSE 2 END, r.ReferenceDate, s.TransactionSplitID) AS Balance, 
+			r.AccountName, 
+			r.Description,
+			r.P,
+			r.Z,
+			r.Amount,
+			r.Credit,
+			r.Debit,
 			r.ReferenceID, 
 			c.MonthID, 
-			s.MonthlyBudgetID, 
-			s.TransactionSplitID
-		FROM AccountTransactionSplit s
-		INNER JOIN cte_Records r ON s.TransactionSplitID = r.TransactionSplitID
-		INNER JOIN Category c ON s.CategoryID = c.CategoryID
+			r.MonthlyBudgetID, 
+			r.TransactionSplitID
+		FROM reports.vCategoryReportRecords r
+		INNER JOIN Category c ON r.CategoryID = c.CategoryID
 		INNER JOIN CategoryMonth cm ON c.MonthID = cm.CategoryMonthID
 		INNER JOIN CategoryType ct ON c.CategoryTypeID = ct.CategoryTypeID
-		LEFT OUTER JOIN dbo.Account a ON a.AccountID = r.AccountID
-		WHERE cm.YearValue = @CategoryYear AND cm.MonthValue = @CategoryMonth AND ct.ReconGroup = 'Income/Monthly Expense'
-		AND r.PaymentTransactionID IS NULL
-		AND NOT EXISTS (SELECT TOP 1 1 FROM AccountTransaction at2 WHERE at2.PaymentTransactionID = r.TransactionID)
+		WHERE cm.YearValue = @CategoryYear AND cm.MonthValue = @CategoryMonth AND ct.ReconGroup = @CategoryType
 	),
 	cte_MonthlyBudgetBase AS (
 		SELECT mb.MonthlyBudgetID, mb.MonthID, mb.AmountFrequency, ISNULL(mb.ReconFrequency, mb.AmountFrequency) AS ReconFrequency
@@ -87,7 +71,20 @@ RETURN
 		FROM cte_TransactionBudgetRowNum tbrn
 		GROUP BY tbrn.MonthlyBudgetID, tbrn.RowNum
 	)
-	SELECT ts.ReferenceDate, ts.AccountName, ts.Description, ts.P, ts.Z, ts.Credit, ts.Debit, ts.Balance, ts.ReferenceID, mb.BudgetItem, CASE WHEN mb.BudgetItem IS NOT NULL THEN ABS(ISNULL(tabrn.Amount, 0)) - ISNULL(mb.Amount, 0) END AS Variance, ts.TransactionSplitID
+	SELECT 
+		ts.ReferenceDate, 
+		ts.AccountName, 
+		ts.Description, 
+		ts.P, 
+		ts.Z, 
+		ts.Amount,
+		ts.Credit, 
+		ts.Debit, 
+		ts.ReferenceID, 
+		mb.BudgetItem, 
+		CASE WHEN mb.BudgetItem IS NOT NULL THEN ABS(ISNULL(tabrn.Amount, 0)) - ISNULL(mb.Amount, 0) END AS Variance, 
+		ts.TransactionSplitID,
+		ROW_NUMBER() OVER (ORDER BY CASE WHEN ts.TransactionSplitID IS NOT NULL THEN 1 ELSE 2 END, CASE WHEN ISNULL(ts.Credit, '') <> '' THEN 1 ELSE 2 END, ts.ReferenceDate, ts.TransactionSplitID) AS Sort
 	FROM cte_TransactionSplits ts
 	LEFT OUTER JOIN cte_TransactionBudgetRowNum tbrn ON ts.TransactionSplitID = tbrn.TransactionSplitID
 	LEFT OUTER JOIN cte_TransactionAmountByBudgetRowNum tabrn ON tbrn.MonthlyBudgetID = tabrn.MonthlyBudgetID AND tbrn.RowNum = tabrn.RowNum
