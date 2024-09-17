@@ -9,7 +9,14 @@ RETURNS TABLE
 AS
 RETURN 
 (
-	WITH cte_TransactionSplits AS (
+	WITH cte_CategoryMonth AS (
+		SELECT cm.CategoryMonthID, COUNT(cw.CategoryWeekID) AS WeekCount
+		FROM CategoryMonth cm
+		INNER JOIN CategoryWeek cw ON cm.CategoryMonthID = cw.MonthID
+		WHERE cm.YearValue = @CategoryYear AND cm.MonthValue = @CategoryMonth
+		GROUP BY cm.CategoryMonthID
+	),
+	cte_TransactionSplits AS (
 		SELECT 
 			r.ReferenceDate, 
 			r.AccountName, 
@@ -25,37 +32,30 @@ RETURN
 			r.TransactionSplitID
 		FROM reports.vCategoryReportRecords r
 		INNER JOIN Category c ON r.CategoryID = c.CategoryID
-		INNER JOIN CategoryMonth cm ON c.MonthID = cm.CategoryMonthID
+		INNER JOIN cte_CategoryMonth cm ON c.MonthID = cm.CategoryMonthID
 		INNER JOIN CategoryType ct ON c.CategoryTypeID = ct.CategoryTypeID
-		WHERE cm.YearValue = @CategoryYear AND cm.MonthValue = @CategoryMonth AND ct.ReconGroup = @CategoryType
+		WHERE ct.ReconGroup = @CategoryType
 	),
 	cte_MonthlyBudgetBase AS (
-		SELECT mb.MonthlyBudgetID, mb.MonthID, mb.AmountFrequency, ISNULL(mb.ReconFrequency, mb.AmountFrequency) AS ReconFrequency
+		SELECT mb.MonthlyBudgetID, mb.MonthID, mb.AmountFrequency, ISNULL(mb.ReconFrequency, mb.AmountFrequency) AS ReconFrequency, CASE WHEN cm.WeekCount = 5 AND mb.BudgetAmount5Week IS NOT NULL THEN mb.BudgetAmount5Week ELSE mb.BudgetAmount END AS BudgetAmount, mb.BudgetItemID, cm.WeekCount
 		FROM budget.MonthlyBudget mb 
-		INNER JOIN CategoryMonth cm ON mb.MonthID = cm.CategoryMonthID
-		WHERE cm.YearValue = @CategoryYear AND cm.MonthValue = @CategoryMonth
+		INNER JOIN cte_CategoryMonth cm ON mb.MonthID = cm.CategoryMonthID
 	),
 	cte_MonthlyBudgetExpandWeekly AS (
 		SELECT mbb.MonthlyBudgetID, 1 AS RowNum
 		FROM cte_MonthlyBudgetBase mbb
-		WHERE mbb.AmountFrequency = 'M'
+		WHERE mbb.ReconFrequency = 'M'
 		UNION
 		SELECT mbb.MonthlyBudgetID, ROW_NUMBER() OVER (PARTITION BY mbb.MonthlyBudgetID ORDER BY cw.StartDate) AS RowNum
 		FROM cte_MonthlyBudgetBase mbb
 		INNER JOIN CategoryWeek cw ON mbb.MonthID = cw.MonthID
-		WHERE mbb.AmountFrequency = 'W'
-	),
-	cte_MonthlyBudgetContractWeekly AS (
-		SELECT mbb.MonthlyBudgetID, mbb.ReconFrequency AS Frequency, CASE WHEN mbb.ReconFrequency = 'M' THEN 1 ELSE mbew.RowNum END AS RowNum
-		FROM cte_MonthlyBudgetExpandWeekly mbew
-		INNER JOIN cte_MonthlyBudgetBase mbb ON mbew.MonthlyBudgetID = mbb.MonthlyBudgetID
+		WHERE mbb.ReconFrequency = 'W'
 	),
 	cte_MonthlyBudget AS (
-		SELECT mb.MonthlyBudgetID, SUM(mb.BudgetAmount) AS Amount, mbcw.Frequency, mbcw.RowNum, bi.Name + CASE WHEN mbcw.Frequency = 'W' THEN ' Week ' + CAST(mbcw.RowNum AS nvarchar) ELSE '' END AS BudgetItem
-		FROM cte_MonthlyBudgetContractWeekly mbcw
-		INNER JOIN budget.MonthlyBudget mb ON mbcw.MonthlyBudgetID = mb.MonthlyBudgetID
-		INNER JOIN budget.BudgetItem bi ON mb.BudgetItemID = bi.BudgetItemID
-		GROUP BY mb.MonthlyBudgetID, bi.Name, mbcw.Frequency, mbcw.RowNum
+		SELECT mbb.MonthlyBudgetID, mbb.BudgetAmount * CASE WHEN mbb.AmountFrequency = 'W' AND mbb.ReconFrequency = 'M' THEN mbb.WeekCount ELSE 1 END AS Amount, mbb.ReconFrequency AS Frequency, mbew.RowNum, bi.Name + CASE WHEN mbb.ReconFrequency = 'W' THEN ' Week ' + CAST(mbew.RowNum AS nvarchar) ELSE '' END AS BudgetItem
+		FROM cte_MonthlyBudgetExpandWeekly mbew
+		INNER JOIN cte_MonthlyBudgetBase mbb ON mbew.MonthlyBudgetID = mbb.MonthlyBudgetID
+		INNER JOIN budget.BudgetItem bi ON mbb.BudgetItemID = bi.BudgetItemID
 	),
 	cte_TransactionBudgetRowNumAbsolute AS (
 		SELECT ts.TransactionSplitID, ts.Amount, ts.MonthlyBudgetID, ROW_NUMBER() OVER (PARTITION BY ts.MonthlyBudgetID ORDER BY ts.ReferenceDate, ts.TransactionSplitID) AS RowNum 

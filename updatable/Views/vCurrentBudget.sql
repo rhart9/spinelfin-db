@@ -2,8 +2,8 @@
 
 
 
-CREATE VIEW updatable.vCurrentBudget AS
-	SELECT bi.Name, cb.BudgetAmount, cb.MatchAmount, a.AccountName, cb.AmountFrequency, cb.ReconFrequency
+CREATE VIEW [updatable].[vCurrentBudget] AS
+	SELECT bi.Name, cb.BudgetAmount AS BudgetAmt4, cb.BudgetAmount5Week AS BudgetAmt5, cb.MatchAmount AS MatchAmt4, cb.MatchAmount5Week AS MatchAmt5, a.AccountName AS Acct, cb.AmountFrequency AS AmtFreq, cb.ReconFrequency AS ReconFreq
 	FROM budget.CurrentBudget cb
 	INNER JOIN budget.BudgetItem bi ON cb.BudgetItemID = bi.BudgetItemID
 	LEFT OUTER JOIN (
