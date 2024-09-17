@@ -82,6 +82,7 @@ RETURN
 		ts.Debit, 
 		ts.ReferenceID, 
 		mb.BudgetItem, 
+		mb.Amount AS BudgetAmount,
 		CASE WHEN mb.BudgetItem IS NOT NULL THEN ABS(ISNULL(tabrn.Amount, 0)) - ISNULL(mb.Amount, 0) END AS Variance, 
 		ts.TransactionSplitID,
 		ROW_NUMBER() OVER (ORDER BY CASE WHEN ts.TransactionSplitID IS NOT NULL THEN 1 ELSE 2 END, CASE WHEN ISNULL(ts.Credit, '') <> '' THEN 1 ELSE 2 END, ts.ReferenceDate, ts.TransactionSplitID) AS Sort
