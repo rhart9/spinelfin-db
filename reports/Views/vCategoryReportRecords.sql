@@ -10,7 +10,7 @@ AS
 		INNER JOIN AccountTransactionSplit ats ON zr.ZeroRecordID = ats.ZeroRecordID
 	)
 	SELECT 
-		r.ReferenceDate, 
+		s.ReferenceDate, 
 		a.AccountName, 
 		CASE WHEN r.TransactionID IS NULL THEN s.Description
 			WHEN ISNULL(s.Description, '') <> '' THEN r.Description + ' | ' + s.Description

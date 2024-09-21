@@ -3,7 +3,7 @@
 
 
 CREATE VIEW [updatable].[vCurrentBudget] AS
-	SELECT bi.Name, cb.BudgetAmount AS BudgetAmt4, cb.BudgetAmount5Week AS BudgetAmt5, cb.MatchAmount AS MatchAmt4, cb.MatchAmount5Week AS MatchAmt5, a.AccountName AS Acct, cb.AmountFrequency AS AmtFreq, cb.ReconFrequency AS ReconFreq
+	SELECT bi.Name, cb.BudgetAmount AS BudgetAmt4, cb.BudgetAmount5Week AS BudgetAmt5, cb.MatchAmount AS MatchAmt4, cb.MatchAmount5Week AS MatchAmt5, a.AccountName AS Acct, cb.AmountFrequency AS AmtFreq, cb.ReconFrequency AS ReconFreq, cb.ScheduledDay AS Day
 	FROM budget.CurrentBudget cb
 	INNER JOIN budget.BudgetItem bi ON cb.BudgetItemID = bi.BudgetItemID
 	LEFT OUTER JOIN (
@@ -14,8 +14,8 @@ GO
 
 
 
-CREATE TRIGGER updatable.[vCurrentBudgetInsertTrigger]
-	ON updatable.vCurrentBudget
+CREATE TRIGGER [updatable].[vCurrentBudgetInsertTrigger]
+	ON [updatable].[vCurrentBudget]
 	INSTEAD OF INSERT
 AS
 BEGIN
@@ -29,7 +29,7 @@ BEGIN
 
 	SELECT @AccountID = a.AccountID
 	FROM Account a
-	INNER JOIN inserted i ON a.AWSFileType = i.AccountName
+	INNER JOIN inserted i ON a.AWSFileType = i.Acct
 
 	IF @BudgetItemID IS NULL
 	BEGIN
@@ -65,8 +65,8 @@ BEGIN
 		SELECT @BudgetItemID = SCOPE_IDENTITY()
 	END
 
-	INSERT INTO budget.CurrentBudget(BudgetItemID, BudgetAmount, MatchAmount, AccountID, AmountFrequency, ReconFrequency)
-	SELECT bi.BudgetItemID, i.BudgetAmount, i.MatchAmount, bi.AccountID, ISNULL(i.AmountFrequency, 'M'), i.ReconFrequency
+	INSERT INTO budget.CurrentBudget(BudgetItemID, BudgetAmount, BudgetAmount5Week, MatchAmount, MatchAmount5Week, AccountID, AmountFrequency, ReconFrequency, ScheduledDay)
+	SELECT bi.BudgetItemID, i.BudgetAmt4, i.BudgetAmt5, i.MatchAmt4, i.MatchAmt5, bi.AccountID, ISNULL(i.AmtFreq, 'M'), ISNULL(i.ReconFreq, 'M'), i.Day
 	FROM budget.BudgetItem bi, inserted i
 	WHERE bi.BudgetItemID = @BudgetItemID
 END

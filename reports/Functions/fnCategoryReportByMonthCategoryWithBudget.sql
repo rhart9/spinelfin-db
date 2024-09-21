@@ -27,7 +27,6 @@ RETURN
 			r.Credit,
 			r.Debit,
 			r.ReferenceID, 
-			c.MonthID, 
 			r.MonthlyBudgetID, 
 			r.TransactionSplitID
 		FROM reports.vCategoryReportRecords r
@@ -52,7 +51,12 @@ RETURN
 		WHERE mbb.ReconFrequency = 'W'
 	),
 	cte_MonthlyBudget AS (
-		SELECT mbb.MonthlyBudgetID, mbb.BudgetAmount * CASE WHEN mbb.AmountFrequency = 'W' AND mbb.ReconFrequency = 'M' THEN mbb.WeekCount ELSE 1 END AS Amount, mbb.ReconFrequency AS Frequency, mbew.RowNum, bi.Name + CASE WHEN mbb.ReconFrequency = 'W' THEN ' Week ' + CAST(mbew.RowNum AS nvarchar) ELSE '' END AS BudgetItem
+		SELECT mbb.MonthlyBudgetID, 
+			mbb.BudgetAmount * CASE WHEN mbb.AmountFrequency = 'W' AND mbb.ReconFrequency = 'M' THEN mbb.WeekCount ELSE 1 END AS Amount, 
+			mbb.ReconFrequency AS Frequency, 
+			mbew.RowNum, 
+			bi.Name + CASE WHEN mbb.ReconFrequency = 'W' THEN ' Week ' + CAST(mbew.RowNum AS nvarchar) ELSE '' END AS BudgetItem,
+			dbo.fnExpectedTransactionDate(mbb.MonthlyBudgetID) AS ExpectedDate
 		FROM cte_MonthlyBudgetExpandWeekly mbew
 		INNER JOIN cte_MonthlyBudgetBase mbb ON mbew.MonthlyBudgetID = mbb.MonthlyBudgetID
 		INNER JOIN budget.BudgetItem bi ON mbb.BudgetItemID = bi.BudgetItemID
@@ -83,9 +87,10 @@ RETURN
 		ts.ReferenceID, 
 		mb.BudgetItem, 
 		mb.Amount AS BudgetAmount,
+		mb.ExpectedDate,
 		CASE WHEN mb.BudgetItem IS NOT NULL THEN ABS(ISNULL(tabrn.Amount, 0)) - ISNULL(mb.Amount, 0) END AS Variance, 
 		ts.TransactionSplitID,
-		ROW_NUMBER() OVER (ORDER BY CASE WHEN ts.TransactionSplitID IS NOT NULL THEN 1 ELSE 2 END, CASE WHEN ISNULL(ts.Credit, '') <> '' THEN 1 ELSE 2 END, ts.ReferenceDate, ts.TransactionSplitID) AS Sort
+		ROW_NUMBER() OVER (ORDER BY CASE WHEN ts.TransactionSplitID IS NOT NULL THEN 1 ELSE 2 END, CASE WHEN ISNULL(ts.Credit, '') <> '' THEN 1 ELSE 2 END, ts.ReferenceDate, ts.TransactionSplitID, CASE WHEN mb.ExpectedDate IS NOT NULL THEN 1 ELSE 2 END, mb.ExpectedDate) AS Sort
 	FROM cte_TransactionSplits ts
 	LEFT OUTER JOIN cte_TransactionBudgetRowNum tbrn ON ts.TransactionSplitID = tbrn.TransactionSplitID
 	LEFT OUTER JOIN cte_TransactionAmountByBudgetRowNum tabrn ON tbrn.MonthlyBudgetID = tabrn.MonthlyBudgetID AND tbrn.RowNum = tabrn.RowNum
