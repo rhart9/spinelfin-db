@@ -8,7 +8,9 @@ CREATE TABLE [budget].[BudgetItem] (
     [AccountID]              INT            NULL,
     [MatchOnlyOnExactAmount] BIT            CONSTRAINT [DF_BudgetItem_MatchOnlyOnExactAmount] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_BudgetItem] PRIMARY KEY CLUSTERED ([BudgetItemID] ASC),
-    CONSTRAINT [FK_BudgetItem_BudgetCategory] FOREIGN KEY ([BudgetCategoryID]) REFERENCES [budget].[BudgetCategory] ([BudgetCategoryID])
+    CONSTRAINT [FK_BudgetItem_BudgetCategory] FOREIGN KEY ([BudgetCategoryID]) REFERENCES [budget].[BudgetCategory] ([BudgetCategoryID]),
+    CONSTRAINT [UQ_BudgetItem] UNIQUE NONCLUSTERED ([Name] ASC)
 );
 GO
+
 
