@@ -11,6 +11,7 @@ CREATE TABLE [budget].[MonthlyBudget] (
     [AmountFrequency]         CHAR (1)       CONSTRAINT [DF_MonthlyBudget_Frequency] DEFAULT ('M') NOT NULL,
     [ReconFrequency]          CHAR (1)       NULL,
     [ScheduledDay]            INT            NULL,
+    [DayOffset]               INT            NULL,
     CONSTRAINT [PK_MonthlyBudget] PRIMARY KEY CLUSTERED ([MonthlyBudgetID] ASC),
     CONSTRAINT [FK_MonthlyBudget_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account] ([AccountID]),
     CONSTRAINT [FK_MonthlyBudget_BudgetItem] FOREIGN KEY ([BudgetItemID]) REFERENCES [budget].[BudgetItem] ([BudgetItemID]),

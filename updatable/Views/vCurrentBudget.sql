@@ -3,7 +3,7 @@
 
 
 CREATE VIEW [updatable].[vCurrentBudget] AS
-	SELECT bi.Name, cb.BudgetAmount AS BudgetAmt4, cb.BudgetAmount5Week AS BudgetAmt5, cb.MatchAmount AS MatchAmt4, cb.MatchAmount5Week AS MatchAmt5, a.AccountName AS Acct, cb.AmountFrequency AS AmtFreq, cb.ReconFrequency AS ReconFreq, cb.ScheduledDay AS Day, CAST(NULL as nvarchar) AS 'AddToCur?'
+	SELECT bi.Name, cb.BudgetAmount AS BudgetAmt4, cb.BudgetAmount5Week AS BudgetAmt5, cb.MatchAmount AS MatchAmt4, cb.MatchAmount5Week AS MatchAmt5, a.AccountName AS Acct, cb.AmountFrequency AS AmtFreq, cb.ReconFrequency AS ReconFreq, cb.ScheduledDay AS DayOfMo, cb.DayOffset AS Offset, CAST(NULL as nvarchar) AS 'AddToCur?'
 	FROM budget.CurrentBudget cb
 	INNER JOIN budget.BudgetItem bi ON cb.BudgetItemID = bi.BudgetItemID
 	LEFT OUTER JOIN (
@@ -68,8 +68,8 @@ BEGIN
 		SELECT @BudgetItemID = SCOPE_IDENTITY()
 	END
 
-	INSERT INTO budget.CurrentBudget(BudgetItemID, BudgetAmount, BudgetAmount5Week, MatchAmount, MatchAmount5Week, AccountID, AmountFrequency, ReconFrequency, ScheduledDay)
-	SELECT bi.BudgetItemID, i.BudgetAmt4, i.BudgetAmt5, i.MatchAmt4, i.MatchAmt5, bi.AccountID, ISNULL(i.AmtFreq, 'M'), ISNULL(i.ReconFreq, 'M'), i.Day
+	INSERT INTO budget.CurrentBudget(BudgetItemID, BudgetAmount, BudgetAmount5Week, MatchAmount, MatchAmount5Week, AccountID, AmountFrequency, ReconFrequency, ScheduledDay, DayOffset)
+	SELECT bi.BudgetItemID, i.BudgetAmt4, i.BudgetAmt5, i.MatchAmt4, i.MatchAmt5, bi.AccountID, ISNULL(i.AmtFreq, 'M'), ISNULL(i.ReconFreq, 'M'), i.DayOfMo, i.Offset
 	FROM budget.BudgetItem bi, inserted i
 	WHERE bi.BudgetItemID = @BudgetItemID
 
@@ -77,8 +77,8 @@ BEGIN
 
 	IF @AddToCurrentMonth = 1
 	BEGIN
-		INSERT INTO budget.MonthlyBudget(BudgetItemID, BudgetAmount, BudgetAmount5Week, MatchAmount, MatchAmount5Week, AccountID, MonthID, OriginalCurrentBudgetID, AmountFrequency, ReconFrequency, ScheduledDay)
-		SELECT bi.BudgetItemID, i.BudgetAmt4, i.BudgetAmt5, i.MatchAmt4, i.MatchAmt5, bi.AccountID, @LatestBudgetMonthID, @CurrentBudgetID, ISNULL(i.AmtFreq, 'M'), ISNULL(i.ReconFreq, 'M'), i.Day
+		INSERT INTO budget.MonthlyBudget(BudgetItemID, BudgetAmount, BudgetAmount5Week, MatchAmount, MatchAmount5Week, AccountID, MonthID, OriginalCurrentBudgetID, AmountFrequency, ReconFrequency, ScheduledDay, DayOffset)
+		SELECT bi.BudgetItemID, i.BudgetAmt4, i.BudgetAmt5, i.MatchAmt4, i.MatchAmt5, bi.AccountID, @LatestBudgetMonthID, @CurrentBudgetID, ISNULL(i.AmtFreq, 'M'), ISNULL(i.ReconFreq, 'M'), i.DayOfMo, i.Offset
 		FROM budget.BudgetItem bi, inserted i
 		WHERE bi.BudgetItemID = @BudgetItemID
 	END

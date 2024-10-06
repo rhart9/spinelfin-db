@@ -56,10 +56,12 @@ RETURN
 			mbb.ReconFrequency AS Frequency, 
 			mbew.RowNum, 
 			bi.Name + CASE WHEN mbb.ReconFrequency = 'W' THEN ' Week ' + CAST(mbew.RowNum AS nvarchar) ELSE '' END AS BudgetItem,
-			dbo.fnExpectedTransactionDate(mbb.MonthlyBudgetID) AS ExpectedDate
+			a.AccountName,
+			dbo.fnExpectedTransactionDate(mbb.MonthlyBudgetID, CASE WHEN mbb.ReconFrequency = 'W' THEN mbew.RowNum END) AS ExpectedDate
 		FROM cte_MonthlyBudgetExpandWeekly mbew
 		INNER JOIN cte_MonthlyBudgetBase mbb ON mbew.MonthlyBudgetID = mbb.MonthlyBudgetID
 		INNER JOIN budget.BudgetItem bi ON mbb.BudgetItemID = bi.BudgetItemID
+		LEFT OUTER JOIN Account a ON bi.AccountID = a.AccountID
 	),
 	cte_TransactionBudgetRowNumAbsolute AS (
 		SELECT ts.TransactionSplitID, ts.Amount, ts.MonthlyBudgetID, ROW_NUMBER() OVER (PARTITION BY ts.MonthlyBudgetID ORDER BY ts.ReferenceDate, ts.TransactionSplitID) AS RowNum 
@@ -90,6 +92,7 @@ RETURN
 		mb.ExpectedDate,
 		CASE WHEN mb.BudgetItem IS NOT NULL THEN ABS(ISNULL(tabrn.Amount, 0)) - ISNULL(mb.Amount, 0) END AS Variance, 
 		ts.TransactionSplitID,
+		mb.AccountName AS BudgetAccount,
 		ROW_NUMBER() OVER (ORDER BY CASE WHEN ts.TransactionSplitID IS NOT NULL THEN 1 ELSE 2 END, CASE WHEN ISNULL(ts.Credit, '') <> '' THEN 1 ELSE 2 END, ts.ReferenceDate, ts.TransactionSplitID, CASE WHEN mb.ExpectedDate IS NOT NULL THEN 1 ELSE 2 END, mb.ExpectedDate) AS Sort
 	FROM cte_TransactionSplits ts
 	LEFT OUTER JOIN cte_TransactionBudgetRowNum tbrn ON ts.TransactionSplitID = tbrn.TransactionSplitID
