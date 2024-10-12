@@ -36,7 +36,7 @@ RETURN
 		WHERE ct.ReconGroup = @CategoryType
 	),
 	cte_MonthlyBudgetBase AS (
-		SELECT mb.MonthlyBudgetID, mb.MonthID, mb.AmountFrequency, ISNULL(mb.ReconFrequency, mb.AmountFrequency) AS ReconFrequency, CASE WHEN cm.WeekCount = 5 AND mb.BudgetAmount5Week IS NOT NULL THEN mb.BudgetAmount5Week ELSE mb.BudgetAmount END AS BudgetAmount, mb.BudgetItemID, cm.WeekCount
+		SELECT mb.MonthlyBudgetID, mb.MonthID, mb.AmountFrequency, ISNULL(mb.ReconFrequency, mb.AmountFrequency) AS ReconFrequency, mb.BudgetAmount, mb.BudgetItemID, cm.WeekCount
 		FROM budget.MonthlyBudget mb 
 		INNER JOIN cte_CategoryMonth cm ON mb.MonthID = cm.CategoryMonthID
 	),

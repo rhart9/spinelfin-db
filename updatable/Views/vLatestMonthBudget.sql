@@ -11,7 +11,7 @@ CREATE VIEW [updatable].[vLatestMonthBudget] AS
 		FROM budget.MonthlyBudget mb
 		INNER JOIN CategoryMonth cm ON mb.MonthID = cm.CategoryMonthID
 	)
-	SELECT m.MonthText, bi.Name, mb.BudgetAmount AS BudgetAmt4, mb.BudgetAmount5Week AS BudgetAmt5, mb.MatchAmount AS MatchAmt4, mb.MatchAmount5Week AS MatchAmt5, a.AccountName AS Acct, mb.AmountFrequency AS AmtFreq, mb.ReconFrequency AS ReconFreq, mb.ScheduledDay AS DayOfMo, mb.DayOffset AS Offset
+	SELECT m.MonthText, bi.Name, mb.BudgetAmount AS BudgetAmt, mb.MatchAmount AS MatchAmt, a.AccountName AS Acct, mb.AmountFrequency AS AmtFreq, mb.ReconFrequency AS ReconFreq, mb.ScheduledDay AS DayOfMo, mb.DayOffset AS Offset
 	FROM budget.MonthlyBudget mb
 	INNER JOIN cte_Month m ON mb.MonthID = m.MonthID AND m.RowNum = 1
 	INNER JOIN budget.BudgetItem bi ON mb.BudgetItemID = bi.BudgetItemID

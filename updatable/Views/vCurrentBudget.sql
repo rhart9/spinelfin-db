@@ -77,8 +77,16 @@ BEGIN
 
 	IF @AddToCurrentMonth = 1
 	BEGIN
-		INSERT INTO budget.MonthlyBudget(BudgetItemID, BudgetAmount, BudgetAmount5Week, MatchAmount, MatchAmount5Week, AccountID, MonthID, OriginalCurrentBudgetID, AmountFrequency, ReconFrequency, ScheduledDay, DayOffset)
-		SELECT bi.BudgetItemID, i.BudgetAmt4, i.BudgetAmt5, i.MatchAmt4, i.MatchAmt5, bi.AccountID, @LatestBudgetMonthID, @CurrentBudgetID, ISNULL(i.AmtFreq, 'M'), ISNULL(i.ReconFreq, 'M'), i.DayOfMo, i.Offset
+		DECLARE @CategoryMonthID int, @WeekCount int
+
+		SELECT @CategoryMonthID = cm.CategoryMonthID, @WeekCount = COUNT(*)
+		FROM CategoryMonth cm
+		INNER JOIN CategoryWeek cw ON cm.CategoryMonthID = cw.MonthID
+		WHERE cm.CategoryMonthID = @LatestBudgetMonthID
+		GROUP BY cm.CategoryMonthID
+
+		INSERT INTO budget.MonthlyBudget(BudgetItemID, BudgetAmount, MatchAmount, AccountID, MonthID, OriginalCurrentBudgetID, AmountFrequency, ReconFrequency, ScheduledDay, DayOffset)
+		SELECT bi.BudgetItemID, CASE WHEN @WeekCount = 5 AND i.BudgetAmt5 IS NOT NULL THEN i.BudgetAmt5 ELSE i.BudgetAmt4 END, CASE WHEN @WeekCount = 5 AND i.MatchAmt5 IS NOT NULL THEN i.MatchAmt5 ELSE i.MatchAmt4 END, bi.AccountID, @LatestBudgetMonthID, @CurrentBudgetID, ISNULL(i.AmtFreq, 'M'), ISNULL(i.ReconFreq, 'M'), i.DayOfMo, i.Offset
 		FROM budget.BudgetItem bi, inserted i
 		WHERE bi.BudgetItemID = @BudgetItemID
 	END
