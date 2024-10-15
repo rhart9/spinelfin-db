@@ -4,6 +4,8 @@ CREATE PROCEDURE [dbo].[spPopulateFromBankStaging]
 	@ExportToLegacy bit = 0
 AS
 BEGIN
+	BEGIN TRAN
+
 	DECLARE @AccountTransactionMap AS TABLE(TransactionID int)
 
 	MERGE INTO AccountTransaction
@@ -32,6 +34,8 @@ BEGIN
 	LEFT OUTER JOIN vCategory c ON bt.CategoryName = c.Description
 
 	EXEC spAssignLegacyRefs
+
+	COMMIT
 END
 GO
 

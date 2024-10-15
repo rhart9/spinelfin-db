@@ -2,6 +2,8 @@ CREATE PROCEDURE [dbo].[spPopulateFromLegacyStaging]
 	@InitialLoad bit = 0
 AS
 BEGIN
+	BEGIN TRAN
+
 	DECLARE @AccountTransactionMap AS TABLE(ImportedTransactionID int, TransactionID int)
 	DECLARE @ZeroRecordMap AS TABLE(ImportedZeroRecordID int, ZeroRecordID int)
 
@@ -136,6 +138,8 @@ BEGIN
 	BEGIN
 		EXEC spAssignLegacyRefs
 	END
+
+	COMMIT
 END
 GO
 
