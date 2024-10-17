@@ -1,7 +1,8 @@
 CREATE PROCEDURE [dbo].[spPopulateFromBankStaging]
 	@BatchGUID uniqueidentifier,
 	@AutoPopulateFriendlyDescription bit,
-	@ExportToLegacy bit = 0
+	@ExportToLegacy bit = 0,
+	@CheckNumberSequence int
 AS
 BEGIN
 	BEGIN TRAN
@@ -15,14 +16,15 @@ BEGIN
 			t.AccountID, 
 			t.TransactionDate, 
 			t.Payee, 
-			t.Amount
+			t.Amount,
+			t.CheckNumber
 		FROM BankStagingTransaction t
 		WHERE t.BatchGUID = @BatchGUID
 	) src
 	ON 1 = 0
 	WHEN NOT MATCHED THEN
-		INSERT (AccountID, TransactionDate, BankDescription, FriendlyDescription, Amount, ProcessedInLegacy, BankStagingTransactionID, ExportToLegacy)
-		VALUES (src.AccountID, src.TransactionDate, src.Payee, CASE WHEN @AutoPopulateFriendlyDescription = 1 THEN src.Payee ELSE NULL END, src.Amount, 0, src.BankStagingTransactionID, @ExportToLegacy)
+		INSERT (AccountID, TransactionDate, BankDescription, FriendlyDescription, Amount, ProcessedInLegacy, BankStagingTransactionID, ExportToLegacy, CheckNumberSequence, CheckNumber)
+		VALUES (src.AccountID, src.TransactionDate, src.Payee, CASE WHEN @AutoPopulateFriendlyDescription = 1 THEN src.Payee ELSE NULL END, src.Amount, 0, src.BankStagingTransactionID, @ExportToLegacy, CASE WHEN src.CheckNumber IS NOT NULL THEN @CheckNumberSequence END, src.CheckNumber)
 	OUTPUT
 		inserted.TransactionID INTO @AccountTransactionMap;
 
