@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[AccountTransaction] (
     [CheckNumber]              NVARCHAR (10)   NULL,
     [AutoCheckNumber]          NVARCHAR (10)   NULL,
     [CheckDate]                DATE            NULL,
+    [CheckPayee]               NVARCHAR (1024) NULL,
     [LegacyMemo]               NVARCHAR (1024) NULL,
     [LegacyCheckNumber]        NVARCHAR (10)   NULL,
     [LegacySpinelfinRef]       INT             NULL,
