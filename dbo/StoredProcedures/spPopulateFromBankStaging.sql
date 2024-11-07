@@ -16,7 +16,7 @@ BEGIN
 			t.TransactionDate, 
 			CASE WHEN t.Payee = '' THEN NULL ELSE t.Payee END AS Payee, 
 			t.Amount,
-			t.CheckNumber,
+			pc.CheckNumber,
 			pc.CheckDate,
 			pc.Payee AS CheckPayee,
 			ISNULL(pc.FriendlyDescription, pc.Payee) AS CheckFriendlyDescription
@@ -27,7 +27,7 @@ BEGIN
 	ON 1 = 0
 	WHEN NOT MATCHED THEN
 		INSERT (AccountID, TransactionDate, BankDescription, FriendlyDescription, Amount, ProcessedInLegacy, BankStagingTransactionID, ExportToLegacy, CheckNumberSequence, CheckNumber, CheckDate, CheckPayee)
-		VALUES (src.AccountID, src.TransactionDate, src.Payee, CASE WHEN src.CheckNumber IS NOT NULL THEN src.CheckFriendlyDescription ELSE src.Payee END, src.Amount, 0, src.BankStagingTransactionID, @ExportToLegacy, CASE WHEN src.CheckNumber IS NOT NULL THEN @CheckNumberSequence END, src.CheckNumber, src.CheckDate, src.CheckPayee)
+		VALUES (src.AccountID, src.TransactionDate, src.Payee, ISNULL(src.CheckFriendlyDescription, src.Payee), src.Amount, 0, src.BankStagingTransactionID, @ExportToLegacy, CASE WHEN src.CheckNumber IS NOT NULL THEN @CheckNumberSequence END, src.CheckNumber, src.CheckDate, src.CheckPayee)
 	OUTPUT
 		inserted.TransactionID INTO @AccountTransactionMap;
 
