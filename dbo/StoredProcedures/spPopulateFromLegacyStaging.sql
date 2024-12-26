@@ -71,7 +71,7 @@ BEGIN
 		INSERT (AccountID, TransactionSerialNumber, TransactionDate, FriendlyDescription, Amount, /*Balance,*/ Reconciled, Cleared, CheckNumber, LegacyMemo, LegacyCheckNumber, LegacySpinelfinRef, ProcessedInLegacy)
 		VALUES (src.AccountID, src.TransactionSerialNumber, src.TransactionDate, src.FriendlyDescription, src.Amount, /*src.Balance,*/ src.Reconciled, src.Cleared, src.CheckNumber, src.LegacyMemo, src.LegacyCheckNumber, src.LegacySpinelfinRef, 1)
 	WHEN MATCHED AND at.Reconciled = 0 THEN
-		UPDATE SET TransactionDate = src.TransactionDate, FriendlyDescription = src.FriendlyDescription, Amount = src.Amount, Reconciled = src.Reconciled, Cleared = src.Cleared, ProcessedInLegacy = 1, UpdatedDT = getdate()
+		UPDATE SET TransactionDate = src.TransactionDate, FriendlyDescription = CASE WHEN at.CheckNumber IS NULL THEN src.FriendlyDescription ELSE at.FriendlyDescription END, Amount = src.Amount, Reconciled = src.Reconciled, Cleared = src.Cleared, ProcessedInLegacy = 1, UpdatedDT = getdate()
 	OUTPUT
 		src.ImportedTransactionID, inserted.TransactionID INTO @AccountTransactionMap;
 
